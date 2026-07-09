@@ -17,10 +17,15 @@ before the run, observation after. Status:
 | # | Experiment | Runtime | Status | Headline |
 |---|-----------|---------|--------|----------|
 | 1 | SCALE — real gallery + seeds | ⚠️ ~34 min | ✅ done | Fréchet ties baseline R@1, **+3–4 pts R@5 & composite**; triangle inert; vMF hurt by λ=0.05 |
-| 2 | WEIGH — λ sweep | ⚠️ ~25–50 min | running (Fréchet + vMF) | — |
-| 3 | KAPPA — honest κ test | ✅ ~7 min | ✅ done | κ_sketch<κ_photo **not** supported on this data; blocked by single-photo/instance + degenerate captions |
+| 2 | WEIGH — λ sweep | ⚠️ ~30 min | ✅ done | Fréchet **λ\*=0.3** (inverted-U); 3-seed edge modest (R@5 +2.2, R@1 +1.3 within σ); vMF loses at every λ |
+| 3 | KAPPA — honest κ test | ✅ ~7 min | ✅ done | κ_sketch<κ_photo **not** supported; blocked by single-photo/instance + degenerate captions |
 | 4 | SHAPE — triangle-excess probe | ✅ ~3 min | ✅ done | E predicts rank (ρ=0.55) but redundant with s·v (partial ρ=−0.22) → **de-prioritize** |
-| 5 | SCENE — FS-COCO real triplets | 🔴 **>1 h** | deferred (gated) | — |
+| 5 | SCENE — FS-COCO real triplets | 🔴 **>1 h** | gate met, deferred | download + loader; the real-text test |
+
+**Campaign headline:** the **Fréchet-mean anchor (λ≈0.3)** is the only spherical
+framing consistently ≥ the pairwise-InfoNCE baseline on Sketchy — a modest,
+seed-sensitive edge (clearest on R@5), not a settled win. Triangle is inert;
+vMF's κ story is unsupported here. Real-text verdict awaits EXP5 (FS-COCO).
 
 Reproduce a diagnostic: `python docs/exp4_shape_probe.py --set steps=1200 num_classes=16`.
 Aggregate runs: `python docs/_aggregate.py`. Republish site: `bash _publish.sh`.
