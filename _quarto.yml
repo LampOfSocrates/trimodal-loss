@@ -48,8 +48,6 @@ website:
             href: 03_vmf_loss.ipynb
       - section: "Experiment campaign"
         contents:
-          - text: "Overview"
-            href: docs/README.md
           - text: "EXP1 · SCALE"
             href: docs/exp1_SCALE_plan_and_observation.md
           - text: "EXP2 · WEIGH"
