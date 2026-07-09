@@ -63,11 +63,53 @@ runtime is unacceptable.
 - Otherwise, report "within noise" honestly and let EXP2 (weights) decide
   whether any framing has a regime where it wins.
 
-## OBSERVATION (fill after run)
+## OBSERVATION — run 2026-07-09 (20 classes, 2000 steps, **2 seeds**, ~34 min total)
 
-- [ ] Results table (mean ± std over seeds), per loss.
-- [ ] Which loss (if any) clears the 2×-std bar vs baseline.
-- [ ] Gallery size / ceiling check: is R@1-instance now well below 1.0?
-- [ ] Worst-class carryover: are jellyfish/duck/snail still the hardest at
-      scale (from the notebooks' worst-triads), or does scale fix them?
-- [ ] Decision: proceed to EXP2 weight sweep on which loss(es)?
+Config: `num_classes=20, max_instances_per_class=100, sketches_per_photo=5,
+steps=2000, batch_size=48`, seeds {0,1}. Gallery = **80 photos**, 400 queries,
+so chance R@1 ≈ 1/80 = 0.0125 (R@1 ≈ 0.20 has ample headroom). Ran **2 seeds,
+not the planned 3**, to stay under the hour — so the ± below is a 2-sample
+spread, indicative only.
+
+| loss | R@1 inst | R@5 inst | R@1 cat | (s+t)→p R@1 inst |
+|---|---|---|---|---|
+| **baseline** (00) | 0.205 ± 0.012 | 0.586 ± 0.024 | 0.969 | 0.294 ± 0.024 |
+| **Fréchet** (01) | 0.209 ± 0.006 | **0.621 ± 0.001** | 0.972 | **0.330 ± 0.015** |
+| **triangle** (02) | 0.201 ± 0.001 | 0.603 ± 0.028 | 0.974 | 0.320 ± 0.003 |
+| **vMF** (03) | **0.115 ± 0.000** | 0.443 ± 0.010 | 0.900 | 0.265 ± 0.005 |
+
+### Findings
+
+1. **Fréchet is the only framing that is consistently ≥ baseline.** On R@1
+   instance it ties baseline (0.209 vs 0.205, well within the seed spread), but
+   on **R@5 instance it is +3.4 pts (0.621 vs 0.586) with near-zero variance**,
+   and on **composite (sketch+text)→photo R@1 it is +3.6 pts (0.330 vs 0.294)** —
+   both hold in *both* seeds. So the consensus-anchor helps rank the correct
+   photo into the top-5 and helps the text bridge, even though it doesn't move
+   top-1. Modest but real.
+2. **Triangle ≈ baseline** (0.201 vs 0.205 R@1i; slightly better R@5i within
+   noise). Exactly what EXP4 predicted — the excess term is largely redundant
+   with the pairwise objective. **Confirmed: de-prioritize.**
+3. **vMF underperforms badly at λ_vmf=0.05** (R@1i 0.115 vs 0.205 — a 44%
+   relative drop, identical across both seeds). This is the λ-confound EXP2 was
+   written to test: with κ≈700–900 the vMF NLL gradient dwarfs the InfoNCE
+   term. Whether small λ recovers it is now the key open question.
+4. **Category retrieval is near-saturated** for all but vMF (R@1cat ≈ 0.97) —
+   the losses differentiate on *instance* retrieval, not category.
+
+### Decision
+
+✅ **Proceed to EXP2**, narrowed by EXP1+EXP3+EXP4:
+- **Fréchet** — sweep λ_frechet upward/downward to see if the R@5/composite gain
+  strengthens or is a fixed small offset.
+- **vMF** — sweep λ_vmf ∈ {0.002, 0.01, 0.05} to test whether small λ removes
+  the damage (the EXP2 core question).
+- **Triangle** — **skip** (or one confirmatory point); EXP1+EXP4 agree it's inert.
+
+### Caveats
+
+- **n=2 seeds** — the plan wanted 3; treat ± as indicative, reconfirm the
+  Fréchet edge with a 3rd seed if it matters for a headline claim.
+- Gallery capped at 80 by `eval_max_queries=400`; a larger gallery (raise the
+  cap) would harden R@1 and is worth doing before any publication-grade number.
+- Pseudo-text captions throughout (A1); real-text claim still waits on EXP5.

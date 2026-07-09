@@ -1,6 +1,7 @@
 data/
 runs/
 _site/
+.exp1_start
 .quarto/
 __pycache__/
 *.pyc

@@ -9,11 +9,11 @@ with `metrics.json`, so results are aggregated after the fact by
 
 | # | Mnemonic | Question | Runtime | Gate |
 |---|----------|----------|---------|------|
-| 1 | **[SCALE](exp1_SCALE_plan_and_observation.md)** | Can the four losses even be separated at a real gallery size + seeds? | ⚠️ ~40–60 min | — |
-| 2 | **[WEIGH](exp2_WEIGH_plan_and_observation.md)** | Does each geometric term have a λ where it beats the baseline? | ⚠️ ~50–60 min | after SCALE |
-| 3 | **[KAPPA](exp3_KAPPA_plan_and_observation.md)** | Is κ_sketch < κ_photo once the training confound is removed? | ✅ ~20–30 min | — |
-| 4 | **[SHAPE](exp4_SHAPE_plan_and_observation.md)** | Does triangle excess E actually predict retrieval success? | ✅ ~10–15 min | — |
-| 5 | **[SCENE](exp5_SCENE_plan_and_observation.md)** | Does any framing beat the baseline on real human triplets (FS-COCO)? | 🔴 **> 1 h** | iff a loss wins EXP2 |
+| 1 | **[SCALE](exp1_SCALE_plan_and_observation.md)** ✅ | Can the four losses even be separated at a real gallery size + seeds? | ~34 min | **Fréchet** ties R@1, +3–4pts R@5 & composite; triangle inert; vMF hurt by λ |
+| 2 | **[WEIGH](exp2_WEIGH_plan_and_observation.md)** 🔄 | Does each geometric term have a λ where it beats the baseline? | ~25–50 min | running (Fréchet + vMF; triangle skipped per EXP1/EXP4) |
+| 3 | **[KAPPA](exp3_KAPPA_plan_and_observation.md)** ✅ | Is κ_sketch < κ_photo once the training confound is removed? | ~7 min | **No** — not supported by any estimator; test blocked by the data |
+| 4 | **[SHAPE](exp4_SHAPE_plan_and_observation.md)** ✅ | Does triangle excess E actually predict retrieval success? | ~3 min | Marginally, but redundant with s·v → de-prioritized |
+| 5 | **[SCENE](exp5_SCENE_plan_and_observation.md)** ⏸️ | Does any framing beat the baseline on real human triplets (FS-COCO)? | 🔴 **> 1 h** | deferred; gate = a loss wins EXP2 |
 
 **Runtime flags.** ✅ well under 1 h · ⚠️ borderline, watch it · 🔴 **over 1 h**
 (EXP5 — dominated by FS-COCO download + a new loader, not GPU time). EXP5 is

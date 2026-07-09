@@ -6,6 +6,25 @@ per-modality κ) beat a plain sum of pairwise InfoNCE terms for
 sketch–image–text retrieval? See **`paper.md`** for the full design doc,
 dataset analysis, and consolidated caveats.
 
+📄 **Published site (rendered notebooks + experiment campaign):**
+<https://lampofsocrates.github.io/trimodal-loss/>
+
+## Experiment campaign (`docs/`)
+
+One `docs/expN_<MNEMONIC>_plan_and_observation.md` per experiment — plan written
+before the run, observation after. Status:
+
+| # | Experiment | Runtime | Status | Headline |
+|---|-----------|---------|--------|----------|
+| 1 | SCALE — real gallery + seeds | ⚠️ ~34 min | ✅ done | Fréchet ties baseline R@1, **+3–4 pts R@5 & composite**; triangle inert; vMF hurt by λ=0.05 |
+| 2 | WEIGH — λ sweep | ⚠️ ~25–50 min | running (Fréchet + vMF) | — |
+| 3 | KAPPA — honest κ test | ✅ ~7 min | ✅ done | κ_sketch<κ_photo **not** supported on this data; blocked by single-photo/instance + degenerate captions |
+| 4 | SHAPE — triangle-excess probe | ✅ ~3 min | ✅ done | E predicts rank (ρ=0.55) but redundant with s·v (partial ρ=−0.22) → **de-prioritize** |
+| 5 | SCENE — FS-COCO real triplets | 🔴 **>1 h** | deferred (gated) | — |
+
+Reproduce a diagnostic: `python docs/exp4_shape_probe.py --set steps=1200 num_classes=16`.
+Aggregate runs: `python docs/_aggregate.py`. Republish site: `bash _publish.sh`.
+
 ## Layout
 
 ```
