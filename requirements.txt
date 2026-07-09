@@ -1,0 +1,12 @@
+torch>=2.4
+torchvision
+open_clip_torch
+scipy
+matplotlib
+pillow
+numpy
+nbformat
+nbclient
+ipykernel
+gdown
+py7zr

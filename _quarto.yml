@@ -1,0 +1,57 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - paper.md
+    - "0*.ipynb"
+
+# Render notebooks exactly as committed — never re-execute. The cells need a
+# GPU + CLIP + the Sketchy data to run; execution stays local (via run.py),
+# and the site just publishes the saved outputs.
+execute:
+  enabled: false
+  freeze: true
+
+website:
+  title: "Trimodal Spherical Loss"
+  description: "Sketch–image–text contrastive losses via spherical geometry."
+  reader-mode: true
+  page-navigation: true
+  search: true
+  repo-url: https://github.com/LampOfSocrates/trimodal-loss
+  navbar:
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "Paper"
+        href: paper.md
+  sidebar:
+    style: docked
+    search: true
+    collapse-level: 1
+    contents:
+      - text: "Home"
+        href: index.qmd
+      - text: "Working paper"
+        href: paper.md
+      - section: "Notebooks"
+        contents:
+          - text: "00 · Data & adaptation (baseline)"
+            href: 00_data_and_adaptation.ipynb
+          - text: "01 · Fréchet-mean anchor loss"
+            href: 01_frechet_mean_loss.ipynb
+          - text: "02 · Spherical-triangle regularizer"
+            href: 02_spherical_triangle_loss.ipynb
+          - text: "03 · von Mises–Fisher loss (κ per modality)"
+            href: 03_vmf_loss.ipynb
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 2
+    code-copy: true
+    code-tools: true
+    code-overflow: wrap
+    fig-responsive: true

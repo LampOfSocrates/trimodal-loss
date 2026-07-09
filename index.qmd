@@ -1,0 +1,46 @@
+---
+title: "Trimodal (Sketch–Image–Text) Contrastive Loss via Spherical Geometry"
+toc: false
+---
+
+An empirical investigation into whether framing trimodal retrieval embeddings
+as points on the unit hypersphere S^{d−1} yields better loss functions than a
+plain sum of pairwise InfoNCE terms. Every notebook page is rendered with its
+saved outputs — plots, metrics, and κ trajectories included — so you can read
+the completed experiments without running anything.
+
+## The question
+
+Normalized CLIP embeddings already live on the sphere, so cosine-InfoNCE is
+already spherical. Does making the geometry **explicit at the triple level** —
+treating each concept's (sketch, photo, text) as three points with a *joint*
+geometric objective — beat the pairwise sum, which optimizes the three angles
+independently? See the **[working paper](paper.md)** for the full design,
+dataset analysis, and caveats.
+
+## The three framings
+
+- **[00 · Data & adaptation](00_data_and_adaptation.ipynb)** — frozen CLIP +
+  LoRA on the sketch path, the pairwise-InfoNCE + adaptive-margin **baseline**,
+  and the shared retrieval protocol (per-instance and per-category Recall@K).
+- **[01 · Fréchet-mean anchor](01_frechet_mean_loss.ipynb)** — pull each
+  triple toward its own Karcher-mean consensus; no modality privileged.
+- **[02 · Spherical-triangle regularizer](02_spherical_triangle_loss.ipynb)** —
+  minimize the geodesic-triangle area (Girard excess) to *couple* the three
+  angles the pairwise sum treats independently.
+- **[03 · von Mises–Fisher](03_vmf_loss.ipynb)** *(primary framing)* — a
+  learnable **per-modality concentration** κ as a spherical uncertainty weight,
+  plus the synthetic-vs-real sketch-cap diagnostic.
+
+## How this site is built
+
+Notebooks are executed locally (GPU, via `run.py`) and committed **with their
+outputs**; each run also writes its own `runs/<notebook>/<timestamp>/` folder
+with `config.json` / `metrics.json` / figures. This site is published by
+[Quarto](https://quarto.org) with re-execution disabled, so it always shows
+exactly the outputs in the repository — no CLIP, GPU, or dataset needed to view
+it.
+
+> **Caveat:** the committed runs are **smoke-scale** (small subset, few
+> hundred steps) — valid as a plumbing check, not as a result. See the paper's
+> assumptions list (A1–A7) and the "next experiments" section of the README.
