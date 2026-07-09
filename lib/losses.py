@@ -123,14 +123,28 @@ class VMFLoss(_PairwiseBase):
         super().__init__(cfg)
         self.lam = cfg["lambda_vmf"]
         self.d = embed_dim
+        # kappa_mode (EXP3): "learned" = gradient-trained free parameter (the
+        # original framing); "ema" = kappa is a detached EMA of the per-modality
+        # Banerjee kappa-hat, i.e. a STATISTIC of the data's concentration, not a
+        # parameter — only the mean direction drives gradients.
+        self.mode = cfg.get("vmf_kappa_mode", "learned")
+        self.ema = cfg.get("vmf_kappa_ema", 0.9)
         k0 = torch.tensor(float(cfg["kappa_init"]), dtype=torch.float64)
         # stable inverse softplus (log(expm1(k)) overflows for k >~ 89):
         # log(e^k - 1) = k + log1p(-e^-k)
         raw0 = (k0 + torch.log1p(-torch.exp(-k0))).float()
         self.raw_kappa = nn.Parameter(raw0.repeat(3))
+        self.register_buffer("ema_kappa", torch.full((3,), float(cfg["kappa_init"])))
 
     def kappas(self):
+        if self.mode == "ema":
+            return self.ema_kappa
         return nn.functional.softplus(self.raw_kappa) + 1e-4
+
+    @staticmethod
+    def _banerjee(rbar, d):
+        rbar = rbar.clamp(1e-4, 1 - 1e-4)
+        return rbar * (d - rbar ** 2) / (1 - rbar ** 2)
 
     def forward(self, s, v, t, ids):
         total, comp = self.pairwise(s, v, t, ids)
@@ -142,8 +156,21 @@ class VMFLoss(_PairwiseBase):
             sums.index_add_(0, inv, members)
             mu = sphere.normalize(sums)
         mu_per = mu[inv]                                   # (3B, d)
-        kap = self.kappas()
         B = s.shape[0]
+
+        if self.mode == "ema":
+            # kappa as a statistic: per-modality mean alignment to the concept
+            # mean -> Banerjee kappa-hat -> EMA. Detached; no grad through kappa.
+            with torch.no_grad():
+                align = (members * mu_per).sum(-1)         # (3B,)
+                for i in range(3):
+                    rbar = align[i * B:(i + 1) * B].mean()
+                    khat = self._banerjee(rbar, self.d)
+                    self.ema_kappa[i].mul_(self.ema).add_((1 - self.ema) * khat)
+            kap = self.ema_kappa
+        else:
+            kap = self.kappas()
+
         kap_per = torch.cat([kap[i].expand(B) for i in range(3)])
         nll = sphere.vmf_nll(members, mu_per, kap_per, d=self.d).mean()
         comp["vmf_nll"] = nll.item()

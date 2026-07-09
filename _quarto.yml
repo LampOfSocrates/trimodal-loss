@@ -5,6 +5,7 @@ project:
     - index.qmd
     - paper.md
     - "0*.ipynb"
+    - docs/*.md
 
 # Render notebooks exactly as committed — never re-execute. The cells need a
 # GPU + CLIP + the Sketchy data to run; execution stays local (via run.py),
@@ -45,6 +46,20 @@ website:
             href: 02_spherical_triangle_loss.ipynb
           - text: "03 · von Mises–Fisher loss (κ per modality)"
             href: 03_vmf_loss.ipynb
+      - section: "Experiment campaign"
+        contents:
+          - text: "Overview"
+            href: docs/README.md
+          - text: "EXP1 · SCALE"
+            href: docs/exp1_SCALE_plan_and_observation.md
+          - text: "EXP2 · WEIGH"
+            href: docs/exp2_WEIGH_plan_and_observation.md
+          - text: "EXP3 · KAPPA"
+            href: docs/exp3_KAPPA_plan_and_observation.md
+          - text: "EXP4 · SHAPE"
+            href: docs/exp4_SHAPE_plan_and_observation.md
+          - text: "EXP5 · SCENE"
+            href: docs/exp5_SCENE_plan_and_observation.md
 
 format:
   html:

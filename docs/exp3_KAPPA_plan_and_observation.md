@@ -61,10 +61,67 @@ If **held-out** per-instance κ̂_sketch is *not* below κ̂_photo, the core vMF
 claim fails on this data (or the pseudo-captions/scale are inadequate and it must
 wait for FS-COCO / real multi-sketch Sketchy). Either way we report it plainly.
 
-## OBSERVATION (fill after run)
+## OBSERVATION — run 2026-07-09 (16 classes, 1000 steps, held-out test = 1575 triples)
 
-- [ ] Table: global κ̂ and mean per-instance κ̂ per modality (held-out).
-- [ ] Is κ̂_sketch < κ̂_photo on held-out data? (the honest H1 test)
-- [ ] Before/after adaptation: does LoRA training narrow the sketch cap?
-- [ ] EMA-κ vs learned-κ: κ ordering and R@1 for each.
-- [ ] Verdict on whether learned-κ is a usable uncertainty weight here.
+Raw numbers in `docs/exp3_kappa_result.json`. **Total time ~7 min** (baseline
+train + two vMF trainings). Config: `num_classes=16, max_instances_per_class=80,
+sketches_per_photo=5, batch_size=48`, HF Sketchy mirror.
+
+### Part A — held-out per-modality κ̂ (Banerjee), before vs after adaptation
+
+| modality (grouping) | BEFORE (frozen CLIP) | AFTER (LoRA baseline) |
+|---|---|---|
+| sketch, per-instance (5 sketches/photo) | 8080 | **1934** |
+| photo, class-level | 2950 | 2950 (path frozen) |
+| text, per-instance | 2.55e6 | 2.55e6 |
+
+### Part B — learned vs EMA κ (fresh vMF models)
+
+| mode | κ_sketch | κ_photo | κ_text | R@1-inst | R@5-inst |
+|---|---|---|---|---|---|
+| learned (gradient param) | 859 | 718 | 727 | 0.118 | 0.433 |
+| ema (statistic) | 6495 | 1175 | 1091 | 0.095 | 0.363 |
+
+### Interpretation — the prediction is NOT supported here, and the honest test is blocked by the data
+
+1. **κ_sketch < κ_photo fails by every estimator.** Learned-κ, EMA-κ, and the
+   before-adaptation held-out κ̂ all put **sketch concentration HIGH, not low**.
+   The framing's headline intuition ("human sketches scatter more than photos ⇒
+   low κ_sketch") simply does not show up on this dataset.
+
+2. **A clean matched test is impossible on the Sketchy mirror** — exactly the
+   paper's §3.3 tension, now empirical:
+   - *Photos* have **one image per instance**, so there is no within-instance
+     photo spread to compare against within-instance sketch spread; the only
+     photo κ available is *class-level* (a different grouping), making the
+     `1934 < 2950` "H1 HOLDS" readout an **apples-to-oranges** artifact, not a
+     real confirmation. (The script prints HOLDS; do not trust it — see below.)
+   - *Text* is **degenerate**: the mirror's generated captions are near-identical
+     within a class, so text embeddings collapse (κ̂ ≈ 2.5e6). Any "text
+     uncertainty" number here is meaningless (A1).
+
+3. **Adaptation *spreads* an instance's sketches** (per-instance κ̂ 8080 → 1934),
+   the opposite of the "training narrows the cap" guess in the plan — LoRA pulls
+   each sketch toward its photo/text and in doing so decorrelates the 5 sketches
+   of a photo.
+
+4. **EMA-κ does not rescue the ordering** and slightly *hurts* retrieval
+   (R@1 0.095 vs 0.118). Turning κ into a statistic instead of a parameter
+   changes its scale but not the qualitative "sketch most concentrated" result.
+
+### Verdict
+
+❌ **On the Sketchy mirror, the vMF per-modality-κ uncertainty story is not
+testable as stated and its central prediction does not hold.** The blockers are
+dataset-intrinsic (single photo per instance; degenerate generated captions),
+not fixable by better optimization. This is a *positive* result for the paper's
+dataset argument: **the vMF claim requires (a) real diverse multi-artist sketches
+AND (b) real human captions AND (c) multiple photos per concept** — i.e. it needs
+true Sketchy sketches *with* FS-COCO-style human text, which no single available
+dataset provides. Until then, **do not claim κ as a learned modality-uncertainty
+weight**; report it as a diagnostic only.
+
+**Fix filed:** the probe's built-in "H1 HOLDS/FAILS" line compares mismatched
+groupings and should compare per-instance sketch vs per-instance photo κ̂ — which
+this data cannot provide. Left in with this caveat rather than reporting a false
+positive.

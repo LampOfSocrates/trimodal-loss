@@ -1,0 +1,64 @@
+name: Publish Quarto site
+
+# Build the notebook suite into a static site and deploy to GitHub Pages.
+# Notebooks are rendered WITHOUT execution (see _quarto.yml: execute.enabled
+# false), so CI needs no GPU, no torch, and no dataset — just Quarto and a
+# minimal jupyter/nbformat install to read the committed notebook outputs.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**/*.ipynb"
+      - "_quarto.yml"
+      - "index.qmd"
+      - "paper.md"
+      - ".github/workflows/publish.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Quarto's jupyter engine needs nbformat/nbclient just to READ the saved
+      # outputs (no cells are executed). Intentionally tiny.
+      - name: Install notebook readers
+        run: python -m pip install --upgrade jupyter nbformat nbclient
+
+      - name: Render site
+        run: quarto render
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,35 @@
+{
+  "A_before": {
+    "sketch": 7291.47900390625,
+    "text": 2554321.5,
+    "photo_classlevel": 2950.585205078125,
+    "per_instance_sketch_kappa": 8080.094711303711,
+    "n_instances": 80
+  },
+  "A_after": {
+    "sketch": 1550.4310302734375,
+    "text": 2554321.5,
+    "photo_classlevel": 2950.585205078125,
+    "per_instance_sketch_kappa": 1934.1660507202148
+  },
+  "B": {
+    "learned": {
+      "kappa": {
+        "sketch": 859.2365112304688,
+        "photo": 718.4949340820312,
+        "text": 726.7385864257812
+      },
+      "R1_instance": 0.1175,
+      "R5_instance": 0.4325
+    },
+    "ema": {
+      "kappa": {
+        "sketch": 6494.939453125,
+        "photo": 1174.93701171875,
+        "text": 1091.4248046875
+      },
+      "R1_instance": 0.095,
+      "R5_instance": 0.3625
+    }
+  }
+}

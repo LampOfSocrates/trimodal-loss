@@ -48,10 +48,45 @@ No training sweep: one baseline model, one pass over the test set, a correlation
 It can *kill* the triangle framing early (if E ⟂ rank) or justify sweeping it in
 EXP2 (if E predicts rank), for ~10 min of compute.
 
-## OBSERVATION (fill after run)
+## OBSERVATION — run 2026-07-09 (baseline model, 1200 steps, 16 classes, 400 test queries)
 
-- [ ] Mean E: hits vs misses (with counts).
-- [ ] Spearman(E, rank) and its p-value.
-- [ ] Partial correlation of E with rank controlling for s·v — does E add
-      signal beyond the pairwise sketch–photo similarity?
-- [ ] Verdict: sweep the triangle loss in EXP2, or de-prioritize it?
+Config: `steps=1200, num_classes=16, max_instances_per_class=80,
+sketches_per_photo=5, batch_size=48`, HF Sketchy mirror. Baseline loss only
+(non-circular). Raw numbers in `docs/exp4_shape_result.json`. **Train time
+~2.8 min** (0.14 s/step at batch 48 — see the EXP1 timing implication below).
+
+**Result:**
+
+| quantity | value |
+|---|---|
+| top-1 hit rate | 0.228 |
+| mean excess E, **hits** (rank 0) | **0.779** |
+| mean excess E, **misses** (rank>0) | **0.838** |
+| Spearman(E, rank), raw | **+0.555** (p ≈ 1e-34) |
+| **partial** Spearman(E, rank) **given s·v** | **−0.22** |
+
+**Interpretation — the headline (raw) correlation is a confound.** Marginally,
+bigger triangles go with worse ranks (ρ=+0.55, hits have visibly smaller E than
+misses), which at face value blesses the triangle term. **But** once we control
+for the sketch–photo similarity s·v, the partial correlation **flips to −0.22**:
+E is large precisely when s·v is small (a bad retrieval), and the pairwise term
+*already* optimizes s·v. After removing that shared dependence, higher E is if
+anything *mildly associated with better* rank. So E carries **almost no
+independent signal** for retrieval beyond what the pairwise sketch–photo term
+captures — and its residual sign is the opposite of what the regularizer assumes.
+
+(The script's built-in verdict string — "E PREDICTS rank" — is triggered by the
+crude `|partial_rho|>0.05` threshold and **mis-reads the sign**; the partial
+correlation is negative. Corrected verdict below.)
+
+**Verdict:** ⚠️ **De-prioritize the triangle term.** It is not free of value —
+E does track configuration quality marginally — but it is largely redundant with
+the pairwise sketch–photo similarity, and its *independent* contribution points
+the wrong way. In EXP2, sweep it **last** and with low expectations; do not spend
+multi-seed budget on it before Fréchet and vMF. This is exactly the early-kill
+the cheap diagnostic was designed to deliver.
+
+**Caveats:** pseudo-text captions (A1); single baseline seed; s·v is only one of
+three pairwise angles — a fuller control would residualize on all of (s·v, s·t,
+v·t). The partial-correlation sign is robust enough to act on, but the magnitude
+should be reconfirmed at EXP1 scale with multiple seeds.

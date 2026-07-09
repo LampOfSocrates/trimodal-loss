@@ -1,0 +1,11 @@
+{
+  "n_queries": 400,
+  "top1_hit_rate": 0.22750000655651093,
+  "mean_excess_hits": 0.7789643406867981,
+  "mean_excess_misses": 0.8375576138496399,
+  "spearman_E_rank": 0.555462715329721,
+  "spearman_p": 9.299558996601433e-34,
+  "partial_spearman_E_rank_given_sv": -0.22082141041755676,
+  "metrics_R1_instance": 0.2275,
+  "verdict": "E PREDICTS rank (sweep triangle in EXP2)"
+}

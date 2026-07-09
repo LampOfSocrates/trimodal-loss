@@ -39,6 +39,8 @@ DEFAULTS = dict(
     lambda_frechet=1.0, karcher_exact=True, karcher_iters=8,
     lambda_triangle=1.0,
     lambda_vmf=0.05, kappa_init=100.0,
+    vmf_kappa_mode="learned",   # "learned" (gradient param) | "ema" (statistic); EXP3
+    vmf_kappa_ema=0.9,
     # kappa gets its own Adam param group: with a shared lr=1e-3 the raw-kappa
     # step is ~1e-3/step (Adam normalizes gradient scale), i.e. frozen in
     # practice. Its equilibrium solves A_d(kappa) = mean alignment — for CLIP
