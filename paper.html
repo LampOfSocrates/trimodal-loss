@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>paper – Trimodal Spherical Loss</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./00_data_and_adaptation.html" rel="next">
+<link href="./index.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-fd6c97ee6dae9fb3bde4de74a669a8cf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Trimodal Spherical Loss</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./paper.html"> 
+<span class="menu-text">Paper</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./paper.html">Working paper</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./paper.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Working paper</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Notebooks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./00_data_and_adaptation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">00 · Data &amp; adaptation (baseline)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_frechet_mean_loss.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">01 · Fréchet-mean anchor loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_spherical_triangle_loss.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">02 · Spherical-triangle regularizer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_vmf_loss.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">03 · von Mises–Fisher loss (κ per modality)</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false">
+ <span class="menu-text">Experiment campaign</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./docs/exp1_SCALE_plan_and_observation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">EXP1 · SCALE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./docs/exp2_WEIGH_plan_and_observation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">EXP2 · WEIGH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./docs/exp3_KAPPA_plan_and_observation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">EXP3 · KAPPA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./docs/exp4_SHAPE_plan_and_observation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">EXP4 · SHAPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./docs/exp5_SCENE_plan_and_observation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">EXP5 · SCENE</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#trimodal-sketchimagetext-contrastive-loss-via-spherical-geometry" id="toc-trimodal-sketchimagetext-contrastive-loss-via-spherical-geometry" class="nav-link active" data-scroll-target="#trimodal-sketchimagetext-contrastive-loss-via-spherical-geometry">Trimodal (Sketch–Image–Text) Contrastive Loss via Spherical Geometry</a>
+  <ul class="collapse">
+  <li><a href="#problem-statement" id="toc-problem-statement" class="nav-link" data-scroll-target="#problem-statement">1. Problem statement</a></li>
+  <li><a href="#the-three-loss-framings" id="toc-the-three-loss-framings" class="nav-link" data-scroll-target="#the-three-loss-framings">2. The three loss framings</a></li>
+  <li><a href="#dataset-selection" id="toc-dataset-selection" class="nav-link" data-scroll-target="#dataset-selection">3. Dataset selection</a></li>
+  <li><a href="#implementation-plan-this-repo" id="toc-implementation-plan-this-repo" class="nav-link" data-scroll-target="#implementation-plan-this-repo">4. Implementation plan (this repo)</a></li>
+  <li><a href="#assumptions-caveats-consolidated" id="toc-assumptions-caveats-consolidated" class="nav-link" data-scroll-target="#assumptions-caveats-consolidated">5. Assumptions &amp; caveats (consolidated)</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 class="title display-7"></h1></header><div class="quarto-title-block"><div class="quarto-title-tools-only"><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+
+
+
+
+<section id="trimodal-sketchimagetext-contrastive-loss-via-spherical-geometry" class="level1">
+<h1>Trimodal (Sketch–Image–Text) Contrastive Loss via Spherical Geometry</h1>
+<p><strong>Status:</strong> working paper / design doc — v0.1 (empirical investigation, results pending)</p>
+<section id="problem-statement" class="level2">
+<h2 class="anchored" data-anchor-id="problem-statement">1. Problem statement</h2>
+<p>Sketch-based image retrieval with a text bridge trains three encoders — sketch <code>s</code>, photo <code>v</code>, text <code>t</code> — into a shared embedding space. The standard recipe is a <strong>weighted sum of three symmetric pairwise InfoNCE terms</strong> (s↔︎v, s↔︎t, v↔︎t), optionally plus a sketch–photo triplet term, on a frozen CLIP backbone with LoRA/adapters on the sketch path.</p>
+<p>Normalized CLIP-style embeddings live on the unit hypersphere S^{d-1}, so cosine-similarity InfoNCE is <em>already</em> a spherical objective. The question this project asks is narrower and sharper:</p>
+<blockquote class="blockquote">
+<p>Does making the spherical geometry <strong>explicit at the triple level</strong> — treating each concept’s (s, v, t) as three points on S^{d-1} with a joint geometric objective — beat the plain sum of pairwise terms, which optimizes the three angles independently?</p>
+</blockquote>
+<p>We deliberately use <strong>directional statistics</strong> (Fréchet means, geodesic distances, spherical excess, von Mises–Fisher densities), <strong>not</strong> literal spherical coordinates φ₁…φ_{d-1}. Hyperspherical coordinates are singular at the poles and ill-conditioned in high dimensions (the Jacobian involves products of sines that vanish exponentially in d); every quantity we need is available coordinate-free from dot products.</p>
+</section>
+<section id="the-three-loss-framings" class="level2">
+<h2 class="anchored" data-anchor-id="the-three-loss-framings">2. The three loss framings</h2>
+<p>Throughout, embeddings are L2-normalized: s, v, t ∈ S^{d-1}. Geodesic distance is the angle: d_g(x, y) = arccos(x·y).</p>
+<section id="fréchet-mean-anchor-01_frechet_mean_loss.ipynb" class="level3">
+<h3 class="anchored" data-anchor-id="fréchet-mean-anchor-01_frechet_mean_loss.ipynb">2.1 Fréchet-mean anchor (<code>01_frechet_mean_loss.ipynb</code>)</h3>
+<p>For each concept’s triple, compute the Fréchet/Karcher mean m = argmin_μ Σ d_g(μ, x_i)², and pull all three modalities toward m:</p>
+<pre><code>L_frechet = (1/3) Σ_{x ∈ {s,v,t}} d_g(x, m)²</code></pre>
+<p>The anchor is the group’s own consensus, so <strong>no modality is privileged</strong> — unlike triplet losses anchored on sketch or text. For a tight cluster the normalized arithmetic mean approximates the Karcher mean to second order; we implement both the fast approximation and the true iterative version (Riemannian gradient descent with exp/log maps) and expose a switch.</p>
+<p>Design choices (flagged): - The anchor <strong>m is detached</strong> from the graph (treated as a target). Letting gradients flow through m is valid but makes the term a pure variance minimizer that can be satisfied by collapse; the contrastive terms prevent collapse either way, but a detached anchor makes the term’s role (“pull toward current consensus”) cleaner and cheaper. - Used as a <strong>regularizer</strong>: L = L_InfoNCE-sum + λ_f · L_frechet. Alone it has no between-concept repulsion.</p>
+</section>
+<section id="spherical-triangle-area-regularizer-02_spherical_triangle_loss.ipynb" class="level3">
+<h3 class="anchored" data-anchor-id="spherical-triangle-area-regularizer-02_spherical_triangle_loss.ipynb">2.2 Spherical-triangle area regularizer (<code>02_spherical_triangle_loss.ipynb</code>)</h3>
+<p>s, v, t are vertices of a geodesic triangle on S^{d-1} (any three points span a ≤3-dim subspace, so the 2-sphere machinery applies exactly). By Girard’s theorem its area equals the spherical excess E = A + B + C − π. E → 0 when the three points become collinear on a great circle (or coincide). Minimizing</p>
+<pre><code>L_tri = E(s, v, t)</code></pre>
+<p><strong>couples the three angles</strong> that a pairwise-InfoNCE sum treats independently: it penalizes “wide” configurations where each pairwise angle is moderate but the triple is spread in two directions. We compute E with <strong>L’Huilier’s theorem</strong> (numerically stable, works entirely from the three side lengths):</p>
+<pre><code>tan(E/4) = √[ tan(σ/2)·tan((σ−a)/2)·tan((σ−b)/2)·tan((σ−c)/2) ],
+σ = (a+b+c)/2,  a,b,c = geodesic side lengths.</code></pre>
+<p>Caveats (flagged): - E = 0 does <strong>not</strong> imply the three points are close — only coplanar-with- origin (near a common great circle). So L_tri is strictly a <em>shape</em> regularizer and must accompany attraction terms. This is also its interest: it adds information pairwise terms don’t carry. - Degenerate triangles (two vertices nearly identical) need clamping; implemented with epsilon-clamps inside the tangents and arccos.</p>
+</section>
+<section id="von-misesfisher-with-per-modality-concentration-03_vmf_loss.ipynb-primary-framing" class="level3">
+<h3 class="anchored" data-anchor-id="von-misesfisher-with-per-modality-concentration-03_vmf_loss.ipynb-primary-framing">2.3 von Mises–Fisher with per-modality concentration (<code>03_vmf_loss.ipynb</code>) — primary framing</h3>
+<p>Model each concept c as a vMF distribution on S^{d-1} with shared mean direction μ_c and <strong>per-modality concentration</strong> κ_m, m ∈ {sketch, photo, text}:</p>
+<pre><code>p(x | μ_c, κ_m) = C_d(κ_m) · exp(κ_m · μ_cᵀ x)</code></pre>
+<p>The loss is the negative log-likelihood of each embedding under its concept’s vMF with its modality’s κ:</p>
+<pre><code>L_vMF = Σ_m [ −κ_m · μ_cᵀ x_m − log C_d(κ_m) ]</code></pre>
+<p>with κ_m <strong>learnable</strong> (softplus-parameterized scalars). This is the framing we care most about because:</p>
+<ul>
+<li><strong>Sketch abstraction variance falls out as low κ_sketch.</strong> Five people draw the same photo five ways; the sketch cap on the sphere is wider than the photo cap. κ_sketch &lt; κ_photo is a <em>prediction</em> this framing makes and we can test it.</li>
+<li>κ acts as a <strong>learned per-modality uncertainty weight</strong>: the gradient on x_m is scaled by κ_m, so noisy modalities are automatically down-weighted — replacing hand-tuned loss weights λ_sv, λ_st, λ_vt. (This is exactly the spherical analogue of heteroscedastic uncertainty weighting à la Kendall &amp; Gal, with −log C_d(κ) as the regularizer that stops κ → 0.)</li>
+</ul>
+<p><strong>Early empirical observation (smoke-scale, Sketchy-HF mirror):</strong> with a frozen photo/text tower and a trainable sketch path, learned κ came out <em>highest</em> for sketch (κ_s 607 &gt; κ_t 550 &gt; κ_v 534 after 600 steps) — the opposite of the naive prediction. Mechanism: sketches are the only modality the optimizer can move, so the vMF term trains them toward the consensus μ and κ_sketch measures <strong>post-adaptation concentration on training data</strong>, not intrinsic modality noise. The κ_sketch &lt; κ_photo prediction should therefore be tested (a) with encoders at rest, or (b) via held-out per-instance κ̂ (Banerjee) on the test split — which the diagnostic section of <code>03_vmf_loss.ipynb</code> provides. Needs confirmation at real scale.</p>
+<p>Numerical notes (flagged, important): - log C_d(κ) involves log I_{d/2−1}(κ), the log modified Bessel function with order ν = d/2 − 1 (ν = 255 for d = 512). We implement it with the <strong>uniform asymptotic expansion</strong> (Abramowitz &amp; Stegun 9.7.7), which is accurate for large ν and differentiable in κ; we validate it against <code>scipy.special.ive</code> at fp64 in the notebook. - μ_c per concept: for Sketchy, ≥5 sketches + 1 photo + text per instance let us estimate μ_c (and even per-instance κ̂_sketch via Banerjee et al.’s approximation κ̂ ≈ R̄(d − R̄²)/(1 − R̄²)) <strong>within a batch</strong>. For single-triple datasets, μ_c is just the (Karcher or normalized) mean of the triple — degenerate but still usable, with κ estimated at class/global level. - Like the other two, used alongside InfoNCE: vMF-NLL handles within-concept geometry and uncertainty; InfoNCE handles between-concept repulsion. A fully generative alternative (vMF mixture with contrastive normalization over concepts in the batch) is noted as future work.</p>
+</section>
+<section id="baseline-to-beat" class="level3">
+<h3 class="anchored" data-anchor-id="baseline-to-beat">2.4 Baseline to beat</h3>
+<p>Weighted sum of three symmetric InfoNCE terms (s↔︎v, s↔︎t, v↔︎t) + an <strong>adaptive-margin sketch–photo triplet</strong>: margin_ij = m₀ · (1 − cos(t_i, t_j)), i.e.&nbsp;semantically close concepts (per the text bridge) get a smaller required margin. (Flagged: this specific adaptive-margin form is our simple instantiation of the idea; the literature has several variants.)</p>
+<p>Backbone: frozen CLIP (open_clip ViT-B/32 by default); <strong>LoRA on the sketch path only</strong> — same visual tower, low-rank adapters that are toggled on for sketch forward passes and off for photo forward passes, so photo/text embeddings stay exactly CLIP’s and text remains the zero-shot semantic bridge.</p>
+</section>
+</section>
+<section id="dataset-selection" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-selection">3. Dataset selection</h2>
+<section id="the-core-constraint" class="level3">
+<h3 class="anchored" data-anchor-id="the-core-constraint">3.1 The core constraint</h3>
+<p><strong>True sketch+photo+text triplets barely exist.</strong> Photo–text pairs exist at web scale (that’s CLIP), and sketch–photo pairs exist at dataset scale, but datasets where a <em>human</em> drew a sketch of a <em>specific</em> photo that also has a <em>human</em> caption are nearly a null set. Every design decision below is downstream of this fact.</p>
+</section>
+<section id="candidate-datasets" class="level3">
+<h3 class="anchored" data-anchor-id="candidate-datasets">3.2 Candidate datasets</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>Size</th>
+<th>Sketch type</th>
+<th>Text</th>
+<th>Triple?</th>
+<th>Role here</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Sketchy</strong></td>
+<td>~12,500 photos, 125 classes, ≥5 sketches/photo</td>
+<td>human, object-level</td>
+<td>✗ (class labels only)</td>
+<td>pseudo (generated text)</td>
+<td><strong>prototyping + vMF κ estimation</strong></td>
+</tr>
+<tr class="even">
+<td><strong>FS-COCO</strong></td>
+<td>~10,000 scene sketches (7k/3k split)</td>
+<td>human freehand, scene-level, stroke timing</td>
+<td>✓ human captions</td>
+<td><strong>✓ real</strong></td>
+<td><strong>primary benchmark</strong></td>
+</tr>
+<tr class="odd">
+<td><strong>SketchyCOCO</strong></td>
+<td>~14k triples</td>
+<td><strong>synthetic</strong> (composed from Sketchy-like parts)</td>
+<td>MS-COCO captions</td>
+<td>pseudo (synthetic sketch)</td>
+<td>secondary, with caveat</td>
+</tr>
+<tr class="even">
+<td><strong>CSTBIR</strong></td>
+<td>~2M composite sketch+text queries, 108k scenes</td>
+<td>mixed</td>
+<td>✓ (query text)</td>
+<td>query-style</td>
+<td>optional scale-up</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sketchy</strong> (Sangkloy et al.&nbsp;2016): ~12,500 photos across 125 object classes with at least 5 human sketches drawn per photo (~75k sketches). Object-level, genuinely human-drawn. <strong>No native captions</strong> — text must be weak class-level prompts (“a photo of a {class}”) or generated captions (BLIP-style), both flagged as pseudo-text. Its killer feature for us: <strong>≥5 sketches per photo means per-instance κ_sketch is estimable</strong> — Sketchy is the <em>best</em> fit for the vMF framing, which is exactly why we prototype there despite the weak text.</p>
+<p><strong>FS-COCO</strong> (Chowdhury et al.&nbsp;2022): ~10,000 human freehand <em>scene</em> sketches, each paired with the photo it depicts <strong>and a human caption</strong>, 7k/3k train/test split, with stroke timing available (unused here, but interesting for future curriculum/partial-sketch work). This is, to our knowledge, the one real human trimodal dataset at usable scale → <strong>primary benchmark</strong>; any headline claim about trimodal losses must hold here. Limitation: <strong>one sketch per scene</strong>, so κ_sketch is only estimable at class/global level, not per-instance.</p>
+<p><strong>SketchyCOCO</strong> (Gao et al.&nbsp;2020): ~14k sketch–photo–caption triples with MS-COCO captions, but the sketches are <strong>synthetic</strong> — composed by pasting class-conditional sketch parts into scene layouts — and most scenes contain fewer than one salient foreground instance’s worth of genuine sketch variation. Use as a <strong>secondary robustness benchmark</strong>, never as the source of a headline claim, and never for κ_sketch estimation (see §3.4).</p>
+<p><strong>CSTBIR</strong> (composite sketch+text retrieval): ~2M composite sketch+text queries over ~108k scenes. Query-style rather than triple-style, mixed sketch provenance. <strong>Optional scale-up</strong> once the losses are validated — useful for testing whether κ-weighting survives at scale, not for validating it.</p>
+</section>
+<section id="the-structural-tension" class="level3">
+<h3 class="anchored" data-anchor-id="the-structural-tension">3.3 The structural tension</h3>
+<p>The vMF framing’s per-instance κ wants Sketchy’s multiple-sketches-per-photo structure; the Fréchet-mean and triangle framings work on any single-triple dataset. No single dataset serves both goals with real text:</p>
+<ul>
+<li>Sketchy: right <em>sketch multiplicity</em>, wrong (absent) <em>text</em>.</li>
+<li>FS-COCO: right <em>text</em>, sketch multiplicity of 1.</li>
+</ul>
+<p>So the design is: <strong>estimate what each dataset can support, claim only what FS-COCO confirms.</strong> Per-instance κ results come from Sketchy with pseudo-text (clearly labeled); the trimodal-loss comparison that matters scientifically is run on FS-COCO with class/global κ.</p>
+</section>
+<section id="synthetic-sketches-augmentation-only-with-a-geometric-warning" class="level3">
+<h3 class="anchored" data-anchor-id="synthetic-sketches-augmentation-only-with-a-geometric-warning">3.4 Synthetic sketches: augmentation only, with a geometric warning</h3>
+<p>Synthetic sketches (SketchyCOCO’s compositions, edge-map conversions, model-generated sketches) are usable for <strong>pretraining/augmentation only</strong>, and everything must be <strong>validated and evaluated on real sketches</strong>. The reason is geometric, and it directly attacks our losses:</p>
+<blockquote class="blockquote">
+<p>Synthetic sketches form a <strong>tighter, differently-centered spherical cap</strong> than real sketches. A generator has one “style”; humans have many. Mixing sources therefore (a) <strong>inflates κ_sketch</strong> — the model learns sketches are more concentrated than human sketches actually are, defeating the entire point of the vMF uncertainty weighting — and (b) <strong>offsets the Fréchet-mean / triangle anchor</strong> toward the synthetic cap center, biasing the consensus point all three modalities are pulled toward.</p>
+</blockquote>
+<p>Rules encoded in the codebase: 1. <strong>κ_sketch is estimated from REAL sketches only.</strong> 2. <strong>Every sample carries a <code>source</code> flag</strong> (<code>real</code> / <code>synthetic</code>) end-to-end, from dataset loader to metrics. 3. <strong>FS-COCO’s fully-human triples remain the headline benchmark</strong>, whatever synthetic data is used upstream.</p>
+</section>
+<section id="recommended-progression" class="level3">
+<h3 class="anchored" data-anchor-id="recommended-progression">3.5 Recommended progression</h3>
+<ol type="1">
+<li><strong>Prototype</strong> all losses on <strong>Sketchy + generated/class captions</strong> (fast, object-level, per-instance κ available). ← <em>this repo’s notebooks</em></li>
+<li><strong>Port to FS-COCO</strong> for the real trimodal claim (human triples, scene-level).</li>
+<li><strong>SketchyCOCO</strong> for robustness under domain shift and the synthetic-cap diagnostic at scale.</li>
+</ol>
+</section>
+<section id="evaluation" class="level3">
+<h3 class="anchored" data-anchor-id="evaluation">3.6 Evaluation</h3>
+<ul>
+<li><strong>Recall@K / Acc.@K</strong> (K ∈ {1, 5, 10}) for sketch→photo retrieval, and (sketch+text)→photo for the composite query setting.</li>
+<li>Reported <strong>per-instance</strong> (correct = the exact paired photo) and <strong>per-category</strong> (correct = any photo of the same class) — sketch retrieval results change character dramatically between these two and both are needed.</li>
+<li><strong>Synthetic-vs-real cap diagnostic</strong>: per source, estimate the sketch embedding mean direction and κ̂ (Banerjee approximation); report (i) the <strong>angle between the synthetic and real cap means</strong> and (ii) <strong>κ̂ per source</strong>. If synthetic κ̂ ≫ real κ̂ or the cap angle is large, synthetic data is geometrically off-manifold and augmentation weights should drop. Implemented in <code>03_vmf_loss.ipynb</code>.</li>
+</ul>
+</section>
+</section>
+<section id="implementation-plan-this-repo" class="level2">
+<h2 class="anchored" data-anchor-id="implementation-plan-this-repo">4. Implementation plan (this repo)</h2>
+<pre><code>trimodal-loss/
+  paper.md                      ← this document
+  lib/                          ← shared module (data, model, sphere ops, losses, training)
+  00_data_and_adaptation.ipynb  ← data + frozen CLIP + LoRA sketch path + InfoNCE baseline + retrieval
+  01_frechet_mean_loss.ipynb    ← Fréchet/Karcher anchor loss
+  02_spherical_triangle_loss.ipynb ← spherical-excess regularizer
+  03_vmf_loss.ipynb             ← vMF with learnable per-modality κ + cap diagnostic
+  data/                         ← datasets cache (gitignore)
+  runs/&lt;notebook&gt;/&lt;timestamp&gt;/  ← every CLI run writes config.json, metrics.json, plots, executed notebook</code></pre>
+<p>All four notebooks train on the same subset with the same seed, backbone, and retrieval protocol, so numbers are directly comparable; each writes <code>metrics.json</code> to its own run folder.</p>
+</section>
+<section id="assumptions-caveats-consolidated" class="level2">
+<h2 class="anchored" data-anchor-id="assumptions-caveats-consolidated">5. Assumptions &amp; caveats (consolidated)</h2>
+<ul>
+<li><strong>A1 — Pseudo-text on Sketchy.</strong> Class-prompt text is weak; conclusions about the text modality from Sketchy are provisional until FS-COCO.</li>
+<li><strong>A2 — Dataset provenance ladder.</strong> The loader tries, in order: (1) the official Sketchy tree if present in <code>data/</code>; (2) the Hugging Face mirror <code>justpers/sketchy</code> — 10,630 real human Sketchy sketch–photo pairs with <em>generated</em> captions, instance identity recovered by hashing the duplicated photo bytes, class labels parsed from captions by a flagged heuristic;
+<ol start="3" type="1">
+<li>a gdown attempt at the official Google Drive archive (usually blocked);</li>
+<li>a clearly-labeled procedurally-generated mock dataset (shape “photos” + jittered outline “sketches”) so the pipeline is smoke-testable end-to-end. <strong>No scientific conclusion is valid on mock data</strong>, and mirror-based class labels/captions are pseudo-annotations (A1).</li>
+</ol></li>
+<li><strong>A3 — Detached Fréchet anchor</strong> (§2.1), <strong>shape-only triangle term</strong> (§2.2), <strong>hybrid vMF+InfoNCE</strong> (§2.3) are all deliberate simplifications, each flagged where implemented.</li>
+<li><strong>A4 — Bessel approximation.</strong> log I_ν via uniform asymptotic expansion; validated against scipy at fp64, but κ values near 0 with small d would need the series expansion instead (not our regime).</li>
+<li><strong>A5 — Small-subset smoke runs.</strong> Default configs are sized to run on CPU in minutes. Real comparisons need the full subset + GPU (<code>pip install torch --index-url https://download.pytorch.org/whl/cu130</code> for the RTX 5070 Ti) and multiple seeds.</li>
+<li><strong>A6 — Adaptive margin form</strong> (§2.4) is one simple instantiation.</li>
+<li><strong>A7 — LoRA placement</strong>: adapters on the ViT block MLP linears (c_fc, c_proj), sketch-forward only. Attention projections are skipped because open_clip’s nn.MultiheadAttention reads its projection <em>parameters</em> functionally — wrapping those modules would silently no-op. qkv-LoRA would need a different attention implementation; not swept here.</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./index.html" class="pagination-link" aria-label="Home">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Home</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./00_data_and_adaptation.html" class="pagination-link" aria-label="00 · Data &amp; adaptation (baseline)">
+        <span class="nav-page-text">00 · Data &amp; adaptation (baseline)</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Trimodal (Sketch–Image–Text) Contrastive Loss via Spherical Geometry</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>**Status:** working paper / design doc — v0.1 (empirical investigation, results pending)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## 1. Problem statement</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>Sketch-based image retrieval with a text bridge trains three encoders —</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>sketch <span class="in">`s`</span>, photo <span class="in">`v`</span>, text <span class="in">`t`</span> — into a shared embedding space. The standard</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>recipe is a **weighted sum of three symmetric pairwise InfoNCE terms**</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>(s↔v, s↔t, v↔t), optionally plus a sketch–photo triplet term, on a frozen</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>CLIP backbone with LoRA/adapters on the sketch path.</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>Normalized CLIP-style embeddings live on the unit hypersphere S^{d-1}, so</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>cosine-similarity InfoNCE is *already* a spherical objective. The question this</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>project asks is narrower and sharper:</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Does making the spherical geometry **explicit at the triple level** — treating</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; each concept's (s, v, t) as three points on S^{d-1} with a joint geometric</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; objective — beat the plain sum of pairwise terms, which optimizes the three</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; angles independently?</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>We deliberately use **directional statistics** (Fréchet means, geodesic</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>distances, spherical excess, von Mises–Fisher densities), **not** literal</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>spherical coordinates φ₁…φ_{d-1}. Hyperspherical coordinates are</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>singular at the poles and ill-conditioned in high dimensions (the Jacobian</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>involves products of sines that vanish exponentially in d); every quantity we</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>need is available coordinate-free from dot products.</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## 2. The three loss framings</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>Throughout, embeddings are L2-normalized: s, v, t ∈ S^{d-1}. Geodesic distance</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>is the angle: d_g(x, y) = arccos(x·y).</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.1 Fréchet-mean anchor (`01_frechet_mean_loss.ipynb`)</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>For each concept's triple, compute the Fréchet/Karcher mean</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>m = argmin_μ Σ d_g(μ, x_i)², and pull all three modalities toward m:</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="in">    L_frechet = (1/3) Σ_{x ∈ {s,v,t}} d_g(x, m)²</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>The anchor is the group's own consensus, so **no modality is privileged** —</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>unlike triplet losses anchored on sketch or text. For a tight cluster the</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>normalized arithmetic mean approximates the Karcher mean to second order; we</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>implement both the fast approximation and the true iterative version</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>(Riemannian gradient descent with exp/log maps) and expose a switch.</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>Design choices (flagged):</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The anchor **m is detached** from the graph (treated as a target). Letting</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  gradients flow through m is valid but makes the term a pure variance</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>  minimizer that can be satisfied by collapse; the contrastive terms prevent</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>  collapse either way, but a detached anchor makes the term's role ("pull</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>  toward current consensus") cleaner and cheaper.</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Used as a **regularizer**: L = L_InfoNCE-sum + λ_f · L_frechet. Alone it has</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  no between-concept repulsion.</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.2 Spherical-triangle area regularizer (`02_spherical_triangle_loss.ipynb`)</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>s, v, t are vertices of a geodesic triangle on S^{d-1} (any three points span</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>a ≤3-dim subspace, so the 2-sphere machinery applies exactly). By Girard's</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>theorem its area equals the spherical excess E = A + B + C − π. E → 0 when the</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>three points become collinear on a great circle (or coincide). Minimizing</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a><span class="in">    L_tri = E(s, v, t)</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>**couples the three angles** that a pairwise-InfoNCE sum treats independently:</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>it penalizes "wide" configurations where each pairwise angle is moderate but</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>the triple is spread in two directions. We compute E with **L'Huilier's</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>theorem** (numerically stable, works entirely from the three side lengths):</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a><span class="in">    tan(E/4) = √[ tan(σ/2)·tan((σ−a)/2)·tan((σ−b)/2)·tan((σ−c)/2) ],</span></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a><span class="in">    σ = (a+b+c)/2,  a,b,c = geodesic side lengths.</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>Caveats (flagged):</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>E = 0 does **not** imply the three points are close — only coplanar-with-</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>  origin (near a common great circle). So L_tri is strictly a *shape*</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>  regularizer and must accompany attraction terms. This is also its interest:</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>  it adds information pairwise terms don't carry.</span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Degenerate triangles (two vertices nearly identical) need clamping;</span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a>  implemented with epsilon-clamps inside the tangents and arccos.</span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.3 von Mises–Fisher with per-modality concentration (`03_vmf_loss.ipynb`) — primary framing</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>Model each concept c as a vMF distribution on S^{d-1} with shared mean</span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>direction μ_c and **per-modality concentration** κ_m, m ∈ {sketch, photo, text}:</span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a><span class="in">    p(x | μ_c, κ_m) = C_d(κ_m) · exp(κ_m · μ_cᵀ x)</span></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>The loss is the negative log-likelihood of each embedding under its concept's</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a>vMF with its modality's κ:</span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a><span class="in">    L_vMF = Σ_m [ −κ_m · μ_cᵀ x_m − log C_d(κ_m) ]</span></span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>with κ_m **learnable** (softplus-parameterized scalars). This is the framing</span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>we care most about because:</span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sketch abstraction variance falls out as low κ_sketch.** Five people draw</span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>  the same photo five ways; the sketch cap on the sphere is wider than the</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>  photo cap. κ_sketch &lt; κ_photo is a *prediction* this framing makes and we</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>  can test it.</span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>κ acts as a **learned per-modality uncertainty weight**: the gradient on</span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>  x_m is scaled by κ_m, so noisy modalities are automatically down-weighted —</span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>  replacing hand-tuned loss weights λ_sv, λ_st, λ_vt. (This is exactly the</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a>  spherical analogue of heteroscedastic uncertainty weighting à la</span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>  Kendall &amp; Gal, with −log C_d(κ) as the regularizer that stops κ → 0.)</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>**Early empirical observation (smoke-scale, Sketchy-HF mirror):** with a</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>frozen photo/text tower and a trainable sketch path, learned κ came out</span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>*highest* for sketch (κ_s 607 &gt; κ_t 550 &gt; κ_v 534 after 600 steps) — the</span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>opposite of the naive prediction. Mechanism: sketches are the only modality</span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>the optimizer can move, so the vMF term trains them toward the consensus μ</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>and κ_sketch measures **post-adaptation concentration on training data**, not</span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>intrinsic modality noise. The κ_sketch &lt; κ_photo prediction should therefore</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>be tested (a) with encoders at rest, or (b) via held-out per-instance κ̂</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>(Banerjee) on the test split — which the diagnostic section of</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a><span class="in">`03_vmf_loss.ipynb`</span> provides. Needs confirmation at real scale.</span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>Numerical notes (flagged, important):</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>log C_d(κ) involves log I_{d/2−1}(κ), the log modified Bessel function with</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>  order ν = d/2 − 1 (ν = 255 for d = 512). We implement it with the **uniform</span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>  asymptotic expansion** (Abramowitz &amp; Stegun 9.7.7), which is accurate for</span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>  large ν and differentiable in κ; we validate it against <span class="in">`scipy.special.ive`</span></span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>  at fp64 in the notebook.</span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>μ_c per concept: for Sketchy, ≥5 sketches + 1 photo + text per instance let</span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>  us estimate μ_c (and even per-instance κ̂_sketch via Banerjee et al.'s</span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>  approximation κ̂ ≈ R̄(d − R̄²)/(1 − R̄²)) **within a batch**. For</span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>  single-triple datasets, μ_c is just the (Karcher or normalized) mean of the</span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>  triple — degenerate but still usable, with κ estimated at class/global level.</span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Like the other two, used alongside InfoNCE: vMF-NLL handles within-concept</span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a>  geometry and uncertainty; InfoNCE handles between-concept repulsion. A</span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a>  fully generative alternative (vMF mixture with contrastive normalization</span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a>  over concepts in the batch) is noted as future work.</span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2.4 Baseline to beat</span></span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a>Weighted sum of three symmetric InfoNCE terms (s↔v, s↔t, v↔t) + an</span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a>**adaptive-margin sketch–photo triplet**: margin_ij = m₀ · (1 − cos(t_i, t_j)),</span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a>i.e. semantically close concepts (per the text bridge) get a smaller required</span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a>margin. (Flagged: this specific adaptive-margin form is our simple</span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a>instantiation of the idea; the literature has several variants.)</span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a>Backbone: frozen CLIP (open_clip ViT-B/32 by default); **LoRA on the sketch</span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>path only** — same visual tower, low-rank adapters that are toggled on for</span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a>sketch forward passes and off for photo forward passes, so photo/text</span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>embeddings stay exactly CLIP's and text remains the zero-shot semantic bridge.</span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a><span class="fu">## 3. Dataset selection</span></span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.1 The core constraint</span></span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>**True sketch+photo+text triplets barely exist.** Photo–text pairs exist at</span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a>web scale (that's CLIP), and sketch–photo pairs exist at dataset scale, but</span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>datasets where a *human* drew a sketch of a *specific* photo that also has a</span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a>*human* caption are nearly a null set. Every design decision below is downstream</span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a>of this fact.</span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.2 Candidate datasets</span></span>
+<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Dataset <span class="pp">|</span> Size <span class="pp">|</span> Sketch type <span class="pp">|</span> Text <span class="pp">|</span> Triple? <span class="pp">|</span> Role here <span class="pp">|</span></span>
+<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|---|---|---|</span></span>
+<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Sketchy** | ~12,500 photos, 125 classes, ≥5 sketches/photo | human, object-level | ✗ (class labels only) | pseudo (generated text) | **prototyping + vMF κ estimation** <span class="pp">|</span></span>
+<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **FS-COCO** | ~10,000 scene sketches (7k/3k split) | human freehand, scene-level, stroke timing | ✓ human captions | **✓ real** | **primary benchmark** <span class="pp">|</span></span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **SketchyCOCO** | ~14k triples | **synthetic** (composed from Sketchy-like parts) <span class="pp">|</span> MS-COCO captions <span class="pp">|</span> pseudo (synthetic sketch) <span class="pp">|</span> secondary, with caveat <span class="pp">|</span></span>
+<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **CSTBIR** <span class="pp">|</span> ~2M composite sketch+text queries, 108k scenes <span class="pp">|</span> mixed <span class="pp">|</span> ✓ (query text) <span class="pp">|</span> query-style <span class="pp">|</span> optional scale-up <span class="pp">|</span></span>
+<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a>**Sketchy** (Sangkloy et al. 2016): ~12,500 photos across 125 object classes</span>
+<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a>with at least 5 human sketches drawn per photo (~75k sketches). Object-level,</span>
+<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a>genuinely human-drawn. **No native captions** — text must be weak class-level</span>
+<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a>prompts ("a photo of a {class}") or generated captions (BLIP-style), both</span>
+<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a>flagged as pseudo-text. Its killer feature for us: **≥5 sketches per photo</span>
+<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>means per-instance κ_sketch is estimable** — Sketchy is the *best* fit for the</span>
+<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>vMF framing, which is exactly why we prototype there despite the weak text.</span>
+<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a>**FS-COCO** (Chowdhury et al. 2022): ~10,000 human freehand *scene* sketches,</span>
+<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a>each paired with the photo it depicts **and a human caption**, 7k/3k</span>
+<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a>train/test split, with stroke timing available (unused here, but interesting</span>
+<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a>for future curriculum/partial-sketch work). This is, to our knowledge, the one</span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>real human trimodal dataset at usable scale → **primary benchmark**; any</span>
+<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a>headline claim about trimodal losses must hold here. Limitation: **one sketch</span>
+<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a>per scene**, so κ_sketch is only estimable at class/global level, not</span>
+<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a>per-instance.</span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a>**SketchyCOCO** (Gao et al. 2020): ~14k sketch–photo–caption triples with</span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a>MS-COCO captions, but the sketches are **synthetic** — composed by pasting</span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a>class-conditional sketch parts into scene layouts — and most scenes contain</span>
+<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a>fewer than one salient foreground instance's worth of genuine sketch</span>
+<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a>variation. Use as a **secondary robustness benchmark**, never as the source of</span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a>a headline claim, and never for κ_sketch estimation (see §3.4).</span>
+<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a>**CSTBIR** (composite sketch+text retrieval): ~2M composite sketch+text</span>
+<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>queries over ~108k scenes. Query-style rather than triple-style, mixed sketch</span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a>provenance. **Optional scale-up** once the losses are validated — useful for</span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a>testing whether κ-weighting survives at scale, not for validating it.</span>
+<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.3 The structural tension</span></span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a>The vMF framing's per-instance κ wants Sketchy's multiple-sketches-per-photo</span>
+<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a>structure; the Fréchet-mean and triangle framings work on any single-triple</span>
+<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a>dataset. No single dataset serves both goals with real text:</span>
+<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sketchy: right *sketch multiplicity*, wrong (absent) *text*.</span>
+<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>FS-COCO: right *text*, sketch multiplicity of 1.</span>
+<span id="cb7-202"><a href="#cb7-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a>So the design is: **estimate what each dataset can support, claim only what</span>
+<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a>FS-COCO confirms.** Per-instance κ results come from Sketchy with pseudo-text</span>
+<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a>(clearly labeled); the trimodal-loss comparison that matters scientifically is</span>
+<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a>run on FS-COCO with class/global κ.</span>
+<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.4 Synthetic sketches: augmentation only, with a geometric warning</span></span>
+<span id="cb7-209"><a href="#cb7-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-210"><a href="#cb7-210" aria-hidden="true" tabindex="-1"></a>Synthetic sketches (SketchyCOCO's compositions, edge-map conversions,</span>
+<span id="cb7-211"><a href="#cb7-211" aria-hidden="true" tabindex="-1"></a>model-generated sketches) are usable for **pretraining/augmentation only**,</span>
+<span id="cb7-212"><a href="#cb7-212" aria-hidden="true" tabindex="-1"></a>and everything must be **validated and evaluated on real sketches**. The</span>
+<span id="cb7-213"><a href="#cb7-213" aria-hidden="true" tabindex="-1"></a>reason is geometric, and it directly attacks our losses:</span>
+<span id="cb7-214"><a href="#cb7-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-215"><a href="#cb7-215" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Synthetic sketches form a **tighter, differently-centered spherical cap**</span></span>
+<span id="cb7-216"><a href="#cb7-216" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; than real sketches. A generator has one "style"; humans have many. Mixing</span></span>
+<span id="cb7-217"><a href="#cb7-217" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; sources therefore (a) **inflates κ_sketch** — the model learns sketches are</span></span>
+<span id="cb7-218"><a href="#cb7-218" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; more concentrated than human sketches actually are, defeating the entire</span></span>
+<span id="cb7-219"><a href="#cb7-219" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; point of the vMF uncertainty weighting — and (b) **offsets the Fréchet-mean</span></span>
+<span id="cb7-220"><a href="#cb7-220" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; / triangle anchor** toward the synthetic cap center, biasing the consensus</span></span>
+<span id="cb7-221"><a href="#cb7-221" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; point all three modalities are pulled toward.</span></span>
+<span id="cb7-222"><a href="#cb7-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-223"><a href="#cb7-223" aria-hidden="true" tabindex="-1"></a>Rules encoded in the codebase:</span>
+<span id="cb7-224"><a href="#cb7-224" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**κ_sketch is estimated from REAL sketches only.**</span>
+<span id="cb7-225"><a href="#cb7-225" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Every sample carries a `source` flag** (<span class="in">`real`</span> / <span class="in">`synthetic`</span>) end-to-end,</span>
+<span id="cb7-226"><a href="#cb7-226" aria-hidden="true" tabindex="-1"></a>   from dataset loader to metrics.</span>
+<span id="cb7-227"><a href="#cb7-227" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**FS-COCO's fully-human triples remain the headline benchmark**, whatever</span>
+<span id="cb7-228"><a href="#cb7-228" aria-hidden="true" tabindex="-1"></a>   synthetic data is used upstream.</span>
+<span id="cb7-229"><a href="#cb7-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-230"><a href="#cb7-230" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.5 Recommended progression</span></span>
+<span id="cb7-231"><a href="#cb7-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-232"><a href="#cb7-232" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Prototype** all losses on **Sketchy + generated/class captions** (fast,</span>
+<span id="cb7-233"><a href="#cb7-233" aria-hidden="true" tabindex="-1"></a>   object-level, per-instance κ available). ← *this repo's notebooks*</span>
+<span id="cb7-234"><a href="#cb7-234" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Port to FS-COCO** for the real trimodal claim (human triples, scene-level).</span>
+<span id="cb7-235"><a href="#cb7-235" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**SketchyCOCO** for robustness under domain shift and the synthetic-cap</span>
+<span id="cb7-236"><a href="#cb7-236" aria-hidden="true" tabindex="-1"></a>   diagnostic at scale.</span>
+<span id="cb7-237"><a href="#cb7-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-238"><a href="#cb7-238" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3.6 Evaluation</span></span>
+<span id="cb7-239"><a href="#cb7-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-240"><a href="#cb7-240" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Recall@K / Acc.@K** (K ∈ {1, 5, 10}) for sketch→photo retrieval, and</span>
+<span id="cb7-241"><a href="#cb7-241" aria-hidden="true" tabindex="-1"></a>  (sketch+text)→photo for the composite query setting.</span>
+<span id="cb7-242"><a href="#cb7-242" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reported **per-instance** (correct = the exact paired photo) and</span>
+<span id="cb7-243"><a href="#cb7-243" aria-hidden="true" tabindex="-1"></a>  **per-category** (correct = any photo of the same class) — sketch retrieval</span>
+<span id="cb7-244"><a href="#cb7-244" aria-hidden="true" tabindex="-1"></a>  results change character dramatically between these two and both are needed.</span>
+<span id="cb7-245"><a href="#cb7-245" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Synthetic-vs-real cap diagnostic**: per source, estimate the sketch</span>
+<span id="cb7-246"><a href="#cb7-246" aria-hidden="true" tabindex="-1"></a>  embedding mean direction and κ̂ (Banerjee approximation); report (i) the</span>
+<span id="cb7-247"><a href="#cb7-247" aria-hidden="true" tabindex="-1"></a>  **angle between the synthetic and real cap means** and (ii) **κ̂ per</span>
+<span id="cb7-248"><a href="#cb7-248" aria-hidden="true" tabindex="-1"></a>  source**. If synthetic κ̂ ≫ real κ̂ or the cap angle is large, synthetic</span>
+<span id="cb7-249"><a href="#cb7-249" aria-hidden="true" tabindex="-1"></a>  data is geometrically off-manifold and augmentation weights should drop.</span>
+<span id="cb7-250"><a href="#cb7-250" aria-hidden="true" tabindex="-1"></a>  Implemented in <span class="in">`03_vmf_loss.ipynb`</span>.</span>
+<span id="cb7-251"><a href="#cb7-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-252"><a href="#cb7-252" aria-hidden="true" tabindex="-1"></a><span class="fu">## 4. Implementation plan (this repo)</span></span>
+<span id="cb7-253"><a href="#cb7-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-254"><a href="#cb7-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-255"><a href="#cb7-255" aria-hidden="true" tabindex="-1"></a><span class="in">trimodal-loss/</span></span>
+<span id="cb7-256"><a href="#cb7-256" aria-hidden="true" tabindex="-1"></a><span class="in">  paper.md                      ← this document</span></span>
+<span id="cb7-257"><a href="#cb7-257" aria-hidden="true" tabindex="-1"></a><span class="in">  lib/                          ← shared module (data, model, sphere ops, losses, training)</span></span>
+<span id="cb7-258"><a href="#cb7-258" aria-hidden="true" tabindex="-1"></a><span class="in">  00_data_and_adaptation.ipynb  ← data + frozen CLIP + LoRA sketch path + InfoNCE baseline + retrieval</span></span>
+<span id="cb7-259"><a href="#cb7-259" aria-hidden="true" tabindex="-1"></a><span class="in">  01_frechet_mean_loss.ipynb    ← Fréchet/Karcher anchor loss</span></span>
+<span id="cb7-260"><a href="#cb7-260" aria-hidden="true" tabindex="-1"></a><span class="in">  02_spherical_triangle_loss.ipynb ← spherical-excess regularizer</span></span>
+<span id="cb7-261"><a href="#cb7-261" aria-hidden="true" tabindex="-1"></a><span class="in">  03_vmf_loss.ipynb             ← vMF with learnable per-modality κ + cap diagnostic</span></span>
+<span id="cb7-262"><a href="#cb7-262" aria-hidden="true" tabindex="-1"></a><span class="in">  data/                         ← datasets cache (gitignore)</span></span>
+<span id="cb7-263"><a href="#cb7-263" aria-hidden="true" tabindex="-1"></a><span class="in">  runs/&lt;notebook&gt;/&lt;timestamp&gt;/  ← every CLI run writes config.json, metrics.json, plots, executed notebook</span></span>
+<span id="cb7-264"><a href="#cb7-264" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb7-265"><a href="#cb7-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-266"><a href="#cb7-266" aria-hidden="true" tabindex="-1"></a>All four notebooks train on the same subset with the same seed, backbone, and</span>
+<span id="cb7-267"><a href="#cb7-267" aria-hidden="true" tabindex="-1"></a>retrieval protocol, so numbers are directly comparable; each writes</span>
+<span id="cb7-268"><a href="#cb7-268" aria-hidden="true" tabindex="-1"></a><span class="in">`metrics.json`</span> to its own run folder.</span>
+<span id="cb7-269"><a href="#cb7-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-270"><a href="#cb7-270" aria-hidden="true" tabindex="-1"></a><span class="fu">## 5. Assumptions &amp; caveats (consolidated)</span></span>
+<span id="cb7-271"><a href="#cb7-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-272"><a href="#cb7-272" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**A1 — Pseudo-text on Sketchy.** Class-prompt text is weak; conclusions</span>
+<span id="cb7-273"><a href="#cb7-273" aria-hidden="true" tabindex="-1"></a>  about the text modality from Sketchy are provisional until FS-COCO.</span>
+<span id="cb7-274"><a href="#cb7-274" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**A2 — Dataset provenance ladder.** The loader tries, in order: (1) the</span>
+<span id="cb7-275"><a href="#cb7-275" aria-hidden="true" tabindex="-1"></a>  official Sketchy tree if present in <span class="in">`data/`</span>; (2) the Hugging Face mirror</span>
+<span id="cb7-276"><a href="#cb7-276" aria-hidden="true" tabindex="-1"></a>  <span class="in">`justpers/sketchy`</span> — 10,630 real human Sketchy sketch–photo pairs with</span>
+<span id="cb7-277"><a href="#cb7-277" aria-hidden="true" tabindex="-1"></a>  *generated* captions, instance identity recovered by hashing the duplicated</span>
+<span id="cb7-278"><a href="#cb7-278" aria-hidden="true" tabindex="-1"></a>  photo bytes, class labels parsed from captions by a flagged heuristic;</span>
+<span id="cb7-279"><a href="#cb7-279" aria-hidden="true" tabindex="-1"></a>  (3) a gdown attempt at the official Google Drive archive (usually blocked);</span>
+<span id="cb7-280"><a href="#cb7-280" aria-hidden="true" tabindex="-1"></a>  (4) a clearly-labeled procedurally-generated mock dataset (shape "photos" +</span>
+<span id="cb7-281"><a href="#cb7-281" aria-hidden="true" tabindex="-1"></a>  jittered outline "sketches") so the pipeline is smoke-testable end-to-end.</span>
+<span id="cb7-282"><a href="#cb7-282" aria-hidden="true" tabindex="-1"></a>  **No scientific conclusion is valid on mock data**, and mirror-based class</span>
+<span id="cb7-283"><a href="#cb7-283" aria-hidden="true" tabindex="-1"></a>  labels/captions are pseudo-annotations (A1).</span>
+<span id="cb7-284"><a href="#cb7-284" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**A3 — Detached Fréchet anchor** (§2.1), **shape-only triangle term**</span>
+<span id="cb7-285"><a href="#cb7-285" aria-hidden="true" tabindex="-1"></a>  (§2.2), **hybrid vMF+InfoNCE** (§2.3) are all deliberate simplifications,</span>
+<span id="cb7-286"><a href="#cb7-286" aria-hidden="true" tabindex="-1"></a>  each flagged where implemented.</span>
+<span id="cb7-287"><a href="#cb7-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**A4 — Bessel approximation.** log I_ν via uniform asymptotic expansion;</span>
+<span id="cb7-288"><a href="#cb7-288" aria-hidden="true" tabindex="-1"></a>  validated against scipy at fp64, but κ values near 0 with small d would</span>
+<span id="cb7-289"><a href="#cb7-289" aria-hidden="true" tabindex="-1"></a>  need the series expansion instead (not our regime).</span>
+<span id="cb7-290"><a href="#cb7-290" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**A5 — Small-subset smoke runs.** Default configs are sized to run on CPU in</span>
+<span id="cb7-291"><a href="#cb7-291" aria-hidden="true" tabindex="-1"></a>  minutes. Real comparisons need the full subset + GPU</span>
+<span id="cb7-292"><a href="#cb7-292" aria-hidden="true" tabindex="-1"></a>  (<span class="in">`pip install torch --index-url https://download.pytorch.org/whl/cu130`</span></span>
+<span id="cb7-293"><a href="#cb7-293" aria-hidden="true" tabindex="-1"></a>  for the RTX 5070 Ti) and multiple seeds.</span>
+<span id="cb7-294"><a href="#cb7-294" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**A6 — Adaptive margin form** (§2.4) is one simple instantiation.</span>
+<span id="cb7-295"><a href="#cb7-295" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**A7 — LoRA placement**: adapters on the ViT block MLP linears (c_fc,</span>
+<span id="cb7-296"><a href="#cb7-296" aria-hidden="true" tabindex="-1"></a>  c_proj), sketch-forward only. Attention projections are skipped because</span>
+<span id="cb7-297"><a href="#cb7-297" aria-hidden="true" tabindex="-1"></a>  open_clip's nn.MultiheadAttention reads its projection *parameters*</span>
+<span id="cb7-298"><a href="#cb7-298" aria-hidden="true" tabindex="-1"></a>  functionally — wrapping those modules would silently no-op. qkv-LoRA would</span>
+<span id="cb7-299"><a href="#cb7-299" aria-hidden="true" tabindex="-1"></a>  need a different attention implementation; not swept here.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

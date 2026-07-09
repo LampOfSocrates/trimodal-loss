@@ -1,0 +1,803 @@
+[
+  {
+    "objectID": "docs/exp5_SCENE_plan_and_observation.html",
+    "href": "docs/exp5_SCENE_plan_and_observation.html",
+    "title": "",
+    "section": "",
+    "text": "Code",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP5 · SCENE"
+    ]
+  },
+  {
+    "objectID": "docs/exp5_SCENE_plan_and_observation.html#why-this-is-the-experiment-that-matters",
+    "href": "docs/exp5_SCENE_plan_and_observation.html#why-this-is-the-experiment-that-matters",
+    "title": "",
+    "section": "Why this is the experiment that matters",
+    "text": "Why this is the experiment that matters\nEverything on Sketchy uses pseudo-text (generated or class-prompt captions, paper.md A1). No claim about the text modality — and therefore about the trimodal losses as trimodal — is real until it holds on human triplets. FS-COCO is that dataset: ~10,000 human freehand scene sketches, each with the photo it depicts and a human caption, 7k/3k split. It is the headline benchmark in the design doc’s progression (step 2).",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP5 · SCENE"
+    ]
+  },
+  {
+    "objectID": "docs/exp5_SCENE_plan_and_observation.html#why-it-is-flagged-1-hour",
+    "href": "docs/exp5_SCENE_plan_and_observation.html#why-it-is-flagged-1-hour",
+    "title": "",
+    "section": "Why it is flagged > 1 hour",
+    "text": "Why it is flagged &gt; 1 hour\n\nDownload & storage. FS-COCO ships the sketches (+ vector/raster + stroke timing) and references MS-COCO photos. Pulling the sketch archive and the corresponding COCO images is multi-GB and network-bound — realistically 30–90 min on a home connection before a single training step.\nNew loader. lib/data.py needs an FS-COCO branch: match each sketch to its COCO image_id, load the human caption, emit Triple(..., source= \"real\") at scene granularity. One sketch per scene ⇒ per-instance κ is not estimable here (κ only at class/global level — paper.md §3.3); the vMF notebook must fall back to global κ on this dataset.\nPreprocessing. Scene sketches are large line drawings; resizing/caching to 224² for CLIP adds a one-time pass over ~10k images.\n\nTraining itself, once data is local, is comparable to EXP1 (~40 min for a multi-seed comparison) — so the &gt;1 h flag is acquisition + wiring, not GPU.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP5 · SCENE"
+    ]
+  },
+  {
+    "objectID": "docs/exp5_SCENE_plan_and_observation.html#method-when-run",
+    "href": "docs/exp5_SCENE_plan_and_observation.html#method-when-run",
+    "title": "",
+    "section": "Method (when run)",
+    "text": "Method (when run)\n\nAdd dataset=\"fscoco\" to lib/data.py: download via the FS-COCO release (GitHub pinakinathc/fscoco / project page), map sketches → COCO photos → captions, honor the official 7k/3k split, tag source=\"real\".\nRe-run all four notebooks with dataset=fscoco, scene-level gallery.\nReport the same metrics as EXP1 plus the first real-text trimodal numbers: composite (sketch+text)→photo vs sketch-only, to see whether the text bridge helps more with human captions than with pseudo-text.\nvMF: global/class-level κ only; the per-instance κ̂ diagnostic is disabled with an explicit note (single sketch per scene).",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP5 · SCENE"
+    ]
+  },
+  {
+    "objectID": "docs/exp5_SCENE_plan_and_observation.html#decision-before-running",
+    "href": "docs/exp5_SCENE_plan_and_observation.html#decision-before-running",
+    "title": "",
+    "section": "Decision before running",
+    "text": "Decision before running\nBecause of the &gt;1 h acquisition cost, EXP5 should run only after EXP1–EXP4 have shown at least one geometric loss is worth the real-data test — otherwise we spend the download budget confirming a null result we already have on Sketchy. Gate: run EXP5 iff some loss clears the baseline band in EXP2.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP5 · SCENE"
+    ]
+  },
+  {
+    "objectID": "docs/exp5_SCENE_plan_and_observation.html#observation-fill-after-run-currently-deferred",
+    "href": "docs/exp5_SCENE_plan_and_observation.html#observation-fill-after-run-currently-deferred",
+    "title": "",
+    "section": "OBSERVATION (fill after run — currently DEFERRED)",
+    "text": "OBSERVATION (fill after run — currently DEFERRED)\n\nData acquisition time and final on-disk size (record actuals vs the estimate above).\nReal-text trimodal metrics table (all four losses).\nDoes the text bridge help more with human captions than pseudo-text?\nGlobal/class κ on FS-COCO (per-instance not available) — sign check only.\nFinal verdict: does any spherical framing beat the baseline on the one real human triplet benchmark?",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP5 · SCENE"
+    ]
+  },
+  {
+    "objectID": "docs/exp3_KAPPA_plan_and_observation.html",
+    "href": "docs/exp3_KAPPA_plan_and_observation.html",
+    "title": "",
+    "section": "",
+    "text": "Code",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP3 · KAPPA"
+    ]
+  },
+  {
+    "objectID": "docs/exp3_KAPPA_plan_and_observation.html#motivation",
+    "href": "docs/exp3_KAPPA_plan_and_observation.html#motivation",
+    "title": "",
+    "section": "Motivation",
+    "text": "Motivation\nThe vMF framing’s headline prediction is κ_sketch &lt; κ_photo (sketches are more dispersed). The committed run found the opposite (κ_sketch highest, 607 vs photo 534), and the paper already flags why: only the sketch path is trainable, so the vMF term trains sketches toward the consensus μ and the learned κ measures post-adaptation concentration on the training set, not intrinsic modality noise. That makes the learned-κ number the wrong instrument. This experiment measures κ honestly.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP3 · KAPPA"
+    ]
+  },
+  {
+    "objectID": "docs/exp3_KAPPA_plan_and_observation.html#hypotheses",
+    "href": "docs/exp3_KAPPA_plan_and_observation.html#hypotheses",
+    "title": "",
+    "section": "Hypotheses",
+    "text": "Hypotheses\n\nH1 (held-out κ̂): estimated on the test split with the Banerjee MLE — not gradient-learned — κ̂_sketch &lt; κ̂_photo, because human sketches of a held-out photo genuinely scatter more than the single photo embedding.\nH2 (statistic beats parameter): replacing the gradient-learned κ with a detached EMA of the per-modality Banerjee κ̂ (κ as a statistic, not a free parameter) preserves the uncertainty-weighting benefit and yields the predicted κ_sketch &lt; κ_photo ordering.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP3 · KAPPA"
+    ]
+  },
+  {
+    "objectID": "docs/exp3_KAPPA_plan_and_observation.html#method",
+    "href": "docs/exp3_KAPPA_plan_and_observation.html#method",
+    "title": "",
+    "section": "Method",
+    "text": "Method\nPart A — held-out κ̂ (no training change): on the test embeddings from a trained baseline model, compute per-modality κ̂ (Banerjee) three ways: 1. global per-modality κ̂ over all test sketches / photos / texts; 2. per-instance κ̂_sketch over each instance’s ≥3 real sketches (the Sketchy structure), averaged — the cleanest estimate of sketch spread; 3. before vs after adaptation (frozen CLIP sketch path vs LoRA-trained), to see whether adaptation narrows the sketch cap. 03_vmf_loss.ipynb already computes (1) and (2) in its diagnostic section; this formalizes and tabulates them and adds the before/after column.\nPart B — EMA-κ variant (small training change): add a vmf_kappa_mode config (learned | ema). In ema mode, VMFLoss sets each κ_m to a detached exponential moving average of the batch Banerjee κ̂ for that modality instead of a learned parameter, so κ reports the data’s concentration and only the mean direction drives gradients. Train once per mode and compare both the κ ordering and R@1.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP3 · KAPPA"
+    ]
+  },
+  {
+    "objectID": "docs/exp3_KAPPA_plan_and_observation.html#commands",
+    "href": "docs/exp3_KAPPA_plan_and_observation.html#commands",
+    "title": "",
+    "section": "Commands",
+    "text": "Commands\n# Part A: reuse a trained model; run the vMF notebook and read its κ̂ diagnostic\npython run.py 03 --set steps=1500 num_classes=16 max_instances_per_class=80 sketches_per_photo=5\n# Part B: EMA vs learned κ\npython run.py 03 --set vmf_kappa_mode=learned steps=1500 num_classes=16 max_instances_per_class=80 sketches_per_photo=5\npython run.py 03 --set vmf_kappa_mode=ema     steps=1500 num_classes=16 max_instances_per_class=80 sketches_per_photo=5",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP3 · KAPPA"
+    ]
+  },
+  {
+    "objectID": "docs/exp3_KAPPA_plan_and_observation.html#what-would-falsify-the-framing",
+    "href": "docs/exp3_KAPPA_plan_and_observation.html#what-would-falsify-the-framing",
+    "title": "",
+    "section": "What would falsify the framing",
+    "text": "What would falsify the framing\nIf held-out per-instance κ̂_sketch is not below κ̂_photo, the core vMF claim fails on this data (or the pseudo-captions/scale are inadequate and it must wait for FS-COCO / real multi-sketch Sketchy). Either way we report it plainly.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP3 · KAPPA"
+    ]
+  },
+  {
+    "objectID": "docs/exp3_KAPPA_plan_and_observation.html#observation-run-2026-07-09-16-classes-1000-steps-held-out-test-1575-triples",
+    "href": "docs/exp3_KAPPA_plan_and_observation.html#observation-run-2026-07-09-16-classes-1000-steps-held-out-test-1575-triples",
+    "title": "",
+    "section": "OBSERVATION — run 2026-07-09 (16 classes, 1000 steps, held-out test = 1575 triples)",
+    "text": "OBSERVATION — run 2026-07-09 (16 classes, 1000 steps, held-out test = 1575 triples)\nRaw numbers in docs/exp3_kappa_result.json. Total time ~7 min (baseline train + two vMF trainings). Config: num_classes=16, max_instances_per_class=80, sketches_per_photo=5, batch_size=48, HF Sketchy mirror.\n\nPart A — held-out per-modality κ̂ (Banerjee), before vs after adaptation\n\n\n\nmodality (grouping)\nBEFORE (frozen CLIP)\nAFTER (LoRA baseline)\n\n\n\n\nsketch, per-instance (5 sketches/photo)\n8080\n1934\n\n\nphoto, class-level\n2950\n2950 (path frozen)\n\n\ntext, per-instance\n2.55e6\n2.55e6\n\n\n\n\n\nPart B — learned vs EMA κ (fresh vMF models)\n\n\n\nmode\nκ_sketch\nκ_photo\nκ_text\nR@1-inst\nR@5-inst\n\n\n\n\nlearned (gradient param)\n859\n718\n727\n0.118\n0.433\n\n\nema (statistic)\n6495\n1175\n1091\n0.095\n0.363\n\n\n\n\n\nInterpretation — the prediction is NOT supported here, and the honest test is blocked by the data\n\nκ_sketch &lt; κ_photo fails by every estimator. Learned-κ, EMA-κ, and the before-adaptation held-out κ̂ all put sketch concentration HIGH, not low. The framing’s headline intuition (“human sketches scatter more than photos ⇒ low κ_sketch”) simply does not show up on this dataset.\nA clean matched test is impossible on the Sketchy mirror — exactly the paper’s §3.3 tension, now empirical:\n\nPhotos have one image per instance, so there is no within-instance photo spread to compare against within-instance sketch spread; the only photo κ available is class-level (a different grouping), making the 1934 &lt; 2950 “H1 HOLDS” readout an apples-to-oranges artifact, not a real confirmation. (The script prints HOLDS; do not trust it — see below.)\nText is degenerate: the mirror’s generated captions are near-identical within a class, so text embeddings collapse (κ̂ ≈ 2.5e6). Any “text uncertainty” number here is meaningless (A1).\n\nAdaptation spreads an instance’s sketches (per-instance κ̂ 8080 → 1934), the opposite of the “training narrows the cap” guess in the plan — LoRA pulls each sketch toward its photo/text and in doing so decorrelates the 5 sketches of a photo.\nEMA-κ does not rescue the ordering and slightly hurts retrieval (R@1 0.095 vs 0.118). Turning κ into a statistic instead of a parameter changes its scale but not the qualitative “sketch most concentrated” result.\n\n\n\nVerdict\n❌ On the Sketchy mirror, the vMF per-modality-κ uncertainty story is not testable as stated and its central prediction does not hold. The blockers are dataset-intrinsic (single photo per instance; degenerate generated captions), not fixable by better optimization. This is a positive result for the paper’s dataset argument: the vMF claim requires (a) real diverse multi-artist sketches AND (b) real human captions AND (c) multiple photos per concept — i.e. it needs true Sketchy sketches with FS-COCO-style human text, which no single available dataset provides. Until then, do not claim κ as a learned modality-uncertainty weight; report it as a diagnostic only.\nFix filed: the probe’s built-in “H1 HOLDS/FAILS” line compares mismatched groupings and should compare per-instance sketch vs per-instance photo κ̂ — which this data cannot provide. Left in with this caveat rather than reporting a false positive.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP3 · KAPPA"
+    ]
+  },
+  {
+    "objectID": "docs/exp1_SCALE_plan_and_observation.html",
+    "href": "docs/exp1_SCALE_plan_and_observation.html",
+    "title": "",
+    "section": "",
+    "text": "Code",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP1 · SCALE"
+    ]
+  },
+  {
+    "objectID": "docs/exp1_SCALE_plan_and_observation.html#motivation",
+    "href": "docs/exp1_SCALE_plan_and_observation.html#motivation",
+    "title": "",
+    "section": "Motivation",
+    "text": "Motivation\nThe committed smoke runs use 8 classes / 96 instances → a 35-photo gallery, where sketch→photo R@5 ≈ 0.9 is near ceiling. Nothing can distinguish the four loss framings at that scale; the R@1 gaps we see are single-digit query counts of noise. Before believing any ranking of baseline vs Fréchet vs triangle vs vMF we need (a) a gallery large enough that R@1 has headroom, and (b) multiple seeds so a difference has an error bar.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP1 · SCALE"
+    ]
+  },
+  {
+    "objectID": "docs/exp1_SCALE_plan_and_observation.html#hypothesis",
+    "href": "docs/exp1_SCALE_plan_and_observation.html#hypothesis",
+    "title": "",
+    "section": "Hypothesis",
+    "text": "Hypothesis\nWith a few hundred gallery photos and 3 seeds, the four losses will separate into a stable ordering on sketch→photo R@1 (per-instance). Null hypothesis to be taken seriously: they are within noise of each other — a plain pairwise InfoNCE sum is already spherical, and the geometric terms may add nothing once the contrastive core is well-tuned.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP1 · SCALE"
+    ]
+  },
+  {
+    "objectID": "docs/exp1_SCALE_plan_and_observation.html#method",
+    "href": "docs/exp1_SCALE_plan_and_observation.html#method",
+    "title": "",
+    "section": "Method",
+    "text": "Method\n\nData: HF Sketchy mirror, num_classes=20, max_instances_per_class=100, sketches_per_photo=5 → ~1.5–2k train sketches, ~300–400 gallery photos.\nSame backbone (frozen CLIP ViT-B/32 + LoRA on sketch path), steps=2000, batch_size=48, all other config identical across the four losses.\nSeeds: {0, 1, 2}. Four losses × 3 seeds = 12 runs.\nMetric of record: sketch→photo R@1 / R@5 instance and R@1 category, mean ± std over seeds. Secondary: composite (sketch+text)→photo R@1.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP1 · SCALE"
+    ]
+  },
+  {
+    "objectID": "docs/exp1_SCALE_plan_and_observation.html#commands",
+    "href": "docs/exp1_SCALE_plan_and_observation.html#commands",
+    "title": "",
+    "section": "Commands",
+    "text": "Commands\nfor s in 0 1 2; do\n  python run.py 00 --set num_classes=20 max_instances_per_class=100 sketches_per_photo=5 steps=2000 batch_size=48 seed=$s\n  python run.py 01 --set num_classes=20 max_instances_per_class=100 sketches_per_photo=5 steps=2000 batch_size=48 seed=$s\n  python run.py 02 --set num_classes=20 max_instances_per_class=100 sketches_per_photo=5 steps=2000 batch_size=48 seed=$s\n  python run.py 03 --set num_classes=20 max_instances_per_class=100 sketches_per_photo=5 steps=2000 batch_size=48 seed=$s\ndone\n(aggregated by docs/_aggregate.py, which reads runs/*/*/metrics.json.)",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP1 · SCALE"
+    ]
+  },
+  {
+    "objectID": "docs/exp1_SCALE_plan_and_observation.html#timing-note-1-h-risk",
+    "href": "docs/exp1_SCALE_plan_and_observation.html#timing-note-1-h-risk",
+    "title": "",
+    "section": "Timing note (⚠️ >1 h risk)",
+    "text": "Timing note (⚠️ &gt;1 h risk)\nAt ~0.07 s/CLIP-step + image decode, one 2000-step run is ~3–4 min; 12 runs ≈ 40–50 min. If image decoding dominates (PNG decode per step, num_workers=0 on Windows), this can drift over 1 h. Mitigation if it does: drop to 2 seeds (8 runs) or precompute/cache photo & text embeddings once (they are frozen — only the sketch path changes), which turns each step into a cheap LoRA forward. The embedding-cache optimization is noted as the first thing to build if EXP1 runtime is unacceptable.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP1 · SCALE"
+    ]
+  },
+  {
+    "objectID": "docs/exp1_SCALE_plan_and_observation.html#success-criteria",
+    "href": "docs/exp1_SCALE_plan_and_observation.html#success-criteria",
+    "title": "",
+    "section": "Success criteria",
+    "text": "Success criteria\n\nA loss beats the baseline on R@1-instance by more than 2× the seed std → worth pursuing.\nOtherwise, report “within noise” honestly and let EXP2 (weights) decide whether any framing has a regime where it wins.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP1 · SCALE"
+    ]
+  },
+  {
+    "objectID": "docs/exp1_SCALE_plan_and_observation.html#observation-run-2026-07-09-20-classes-2000-steps-2-seeds-34-min-total",
+    "href": "docs/exp1_SCALE_plan_and_observation.html#observation-run-2026-07-09-20-classes-2000-steps-2-seeds-34-min-total",
+    "title": "",
+    "section": "OBSERVATION — run 2026-07-09 (20 classes, 2000 steps, 2 seeds, ~34 min total)",
+    "text": "OBSERVATION — run 2026-07-09 (20 classes, 2000 steps, 2 seeds, ~34 min total)\nConfig: num_classes=20, max_instances_per_class=100, sketches_per_photo=5, steps=2000, batch_size=48, seeds {0,1}. Gallery = 80 photos, 400 queries, so chance R@1 ≈ 1/80 = 0.0125 (R@1 ≈ 0.20 has ample headroom). Ran 2 seeds, not the planned 3, to stay under the hour — so the ± below is a 2-sample spread, indicative only.\n\n\n\n\n\n\n\n\n\n\nloss\nR@1 inst\nR@5 inst\nR@1 cat\n(s+t)→p R@1 inst\n\n\n\n\nbaseline (00)\n0.205 ± 0.012\n0.586 ± 0.024\n0.969\n0.294 ± 0.024\n\n\nFréchet (01)\n0.209 ± 0.006\n0.621 ± 0.001\n0.972\n0.330 ± 0.015\n\n\ntriangle (02)\n0.201 ± 0.001\n0.603 ± 0.028\n0.974\n0.320 ± 0.003\n\n\nvMF (03)\n0.115 ± 0.000\n0.443 ± 0.010\n0.900\n0.265 ± 0.005\n\n\n\n\nFindings\n\nFréchet is the only framing that is consistently ≥ baseline. On R@1 instance it ties baseline (0.209 vs 0.205, well within the seed spread), but on R@5 instance it is +3.4 pts (0.621 vs 0.586) with near-zero variance, and on composite (sketch+text)→photo R@1 it is +3.6 pts (0.330 vs 0.294) — both hold in both seeds. So the consensus-anchor helps rank the correct photo into the top-5 and helps the text bridge, even though it doesn’t move top-1. Modest but real.\nTriangle ≈ baseline (0.201 vs 0.205 R@1i; slightly better R@5i within noise). Exactly what EXP4 predicted — the excess term is largely redundant with the pairwise objective. Confirmed: de-prioritize.\nvMF underperforms badly at λ_vmf=0.05 (R@1i 0.115 vs 0.205 — a 44% relative drop, identical across both seeds). This is the λ-confound EXP2 was written to test: with κ≈700–900 the vMF NLL gradient dwarfs the InfoNCE term. Whether small λ recovers it is now the key open question.\nCategory retrieval is near-saturated for all but vMF (R@1cat ≈ 0.97) — the losses differentiate on instance retrieval, not category.\n\n\n\nDecision\n✅ Proceed to EXP2, narrowed by EXP1+EXP3+EXP4: - Fréchet — sweep λ_frechet upward/downward to see if the R@5/composite gain strengthens or is a fixed small offset. - vMF — sweep λ_vmf ∈ {0.002, 0.01, 0.05} to test whether small λ removes the damage (the EXP2 core question). - Triangle — skip (or one confirmatory point); EXP1+EXP4 agree it’s inert.\n\n\nCaveats\n\nn=2 seeds — the plan wanted 3; treat ± as indicative, reconfirm the Fréchet edge with a 3rd seed if it matters for a headline claim.\nGallery capped at 80 by eval_max_queries=400; a larger gallery (raise the cap) would harden R@1 and is worth doing before any publication-grade number.\nPseudo-text captions throughout (A1); real-text claim still waits on EXP5.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP1 · SCALE"
+    ]
+  },
+  {
+    "objectID": "02_spherical_triangle_loss.html",
+    "href": "02_spherical_triangle_loss.html",
+    "title": "02 — Spherical-Triangle Area Regularizer",
+    "section": "",
+    "text": "s, v, t are vertices of a geodesic triangle on S^{d−1}; its area = spherical excess E = A + B + C − π (Girard), computed stably from side lengths via L’Huilier’s theorem (paper.md §2.2). E → 0 as the triple approaches a common great circle, so minimizing E couples the three angles that a pairwise-InfoNCE sum optimizes independently.\nKey caveat: E = 0 means coplanar-with-origin, not close — this is strictly a shape regularizer and rides on the same pairwise-InfoNCE base as the other notebooks.\nCLI: python run.py 02 → results in runs/02_spherical_triangle_loss/&lt;timestamp&gt;/.\n%matplotlib inline\n# ============================ CONFIG ============================\n# Edit here, or override headlessly:   python run.py 02 --set steps=200 dataset=mock\n# All keys + defaults live in lib/config.py; TRIMODAL_* env vars override them.\nimport sys, pathlib\n_p = pathlib.Path.cwd()\nif not (_p / \"lib\").exists() and (_p / \"trimodal-loss\" / \"lib\").exists():\n    _p = _p / \"trimodal-loss\"          # allow launching jupyter from the repo root\nsys.path.insert(0, str(_p))\n\nfrom lib.config import get_config\nfrom lib.run_utils import new_run_dir\n\nNOTEBOOK = \"02_spherical_triangle_loss\"\nCONFIG = get_config()                  # e.g. get_config(dataset=\"mock\", backbone=\"toy\")\nRUN_DIR = new_run_dir(NOTEBOOK)        # every run gets its own results folder\nprint(\"run dir:\", RUN_DIR)\nfor k, v in sorted(CONFIG.items()):\n    print(f\"  {k:26s} {v}\")\n\nrun dir: C:\\Users\\soura\\Code\\2026\\trimodal-loss\\runs\\02_spherical_triangle_loss\\20260709-191540\n  backbone                   clip\n  batch_size                 24\n  clip_model                 ViT-B-32\n  clip_pretrained            openai\n  data_root                  C:\\Users\\soura\\Code\\2026\\trimodal-loss\\data\n  dataset                    sketchy\n  device                     auto\n  eval_max_queries           400\n  image_size                 224\n  kappa_init                 100.0\n  kappa_lr                   1.0\n  karcher_exact              True\n  karcher_iters              8\n  lambda_frechet             1.0\n  lambda_triangle            1.0\n  lambda_vmf                 0.05\n  lora_alpha                 16.0\n  lora_rank                  8\n  lr                         0.001\n  max_instances_per_class    12\n  num_classes                8\n  recall_ks                  (1, 5, 10)\n  seed                       42\n  sketches_per_photo         3\n  steps                      60\n  temperature                0.07\n  triplet_margin0            0.2\n  vmf_instances_per_batch    8\n  vmf_triples_per_instance   3\n  w_st                       0.5\n  w_sv                       1.0\n  w_triplet                  0.5\n  w_vt                       0.25\n# Data (download-or-mock) + frozen backbone + LoRA sketch path — shared by all notebooks\nfrom lib.train import setup_experiment\n\nexp = setup_experiment(CONFIG)\nmodel, ds_train, ds_test = exp[\"model\"], exp[\"ds_train\"], exp[\"ds_test\"]\nprint(\"embed dim:\", model.embed_dim,\n      \"| trainable params:\", f\"{sum(p.numel() for p in model.trainable_parameters()):,}\")\n\n[setup] device=cuda\n[data] using Sketchy HF mirror (justpers/sketchy) at C:\\Users\\soura\\Code\\2026\\trimodal-loss\\data\\sketchy_hf — real human sketches, GENERATED captions (pseudo-text)\n\n\nC:\\ProgramData\\miniconda3\\Lib\\site-packages\\tqdm\\auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html\n  from .autonotebook import tqdm as notebook_tqdm\nC:\\Users\\soura\\AppData\\Roaming\\Python\\Python313\\site-packages\\open_clip\\factory.py:450: UserWarning: QuickGELU mismatch between final model config (quick_gelu=False) and pretrained tag 'openai' (quick_gelu=True).\n  warnings.warn(\n\n\n[model] CLIP ViT-B-32 frozen; LoRA r=8 injected into 24 MLP linears\n[setup] dataset=sketchy-hf  triples=288 (real=288, synthetic=0)  train=183 test=105\nembed dim: 512 | trainable params: 737,280",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "02 · Spherical-triangle regularizer"
+    ]
+  },
+  {
+    "objectID": "02_spherical_triangle_loss.html#sanity-known-areas",
+    "href": "02_spherical_triangle_loss.html#sanity-known-areas",
+    "title": "02 — Spherical-Triangle Area Regularizer",
+    "section": "Sanity: known areas",
+    "text": "Sanity: known areas\n\nimport math\nimport torch\nfrom lib import sphere\n\n# Octant triangle (three orthogonal unit vectors) has excess exactly pi/2\ne = torch.eye(3)\nE_oct = sphere.spherical_triangle_excess(e[0:1], e[1:2], e[2:3])\nprint(f\"octant triangle:        E = {E_oct.item():.6f}   (exact pi/2 = {torch.pi / 2:.6f})\")\n\n# Near-degenerate (three nearly coincident points) -&gt; E ~ 0.\n# NB: in 512-dim, eps*randn(512) has norm eps*sqrt(512) — keep eps small.\na = sphere.normalize(torch.randn(1, 512))\nb = sphere.normalize(a + 0.004 * torch.randn(1, 512))\nc = sphere.normalize(a - 0.006 * torch.randn(1, 512))\nprint(f\"near-coincident triple: E = {sphere.spherical_triangle_excess(a, b, c).item():.3e}   (-&gt; 0)\")\n\n# Points on one great circle (coplanar with origin) -&gt; E ~ 0 even though far apart\nu, w = torch.linalg.qr(torch.randn(512, 2)).Q.T\ngc = lambda t: (math.cos(t) * u + math.sin(t) * w).unsqueeze(0)\nprint(f\"great-circle triple:    E = {sphere.spherical_triangle_excess(gc(0.1), gc(0.9), gc(2.0)).item():.3e}   (-&gt; 0, though points are far apart!)\")\n\noctant triangle:        E = 1.570796   (exact pi/2 = 1.570796)\nnear-coincident triple: E = 6.154e-03   (-&gt; 0)\ngreat-circle triple:    E = 5.876e-04   (-&gt; 0, though points are far apart!)",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "02 · Spherical-triangle regularizer"
+    ]
+  },
+  {
+    "objectID": "02_spherical_triangle_loss.html#train-with-the-triangle-area-term",
+    "href": "02_spherical_triangle_loss.html#train-with-the-triangle-area-term",
+    "title": "02 — Spherical-Triangle Area Regularizer",
+    "section": "Train with the triangle-area term",
+    "text": "Train with the triangle-area term\n\nfrom lib.losses import build_loss\nfrom lib.train import train\n\nloss_module = build_loss(\"triangle\", CONFIG, model.embed_dim)\nhistory = train(exp, loss_module)\n\n[train] 737,280 trainable params, 60 steps\n  step    0  loss 4.8847    (1s)\n  step    6  loss 3.6599    (2s)\n  step   12  loss 3.1717    (2s)\n  step   18  loss 2.4753    (2s)\n  step   24  loss 2.5235    (3s)\n  step   30  loss 2.0239    (3s)\n  step   36  loss 1.9551    (4s)\n  step   42  loss 2.2300    (4s)\n  step   48  loss 1.9393    (4s)\n  step   54  loss 1.8469    (5s)\n  step   59  loss 1.8147    (5s)\n\n\n\nfrom lib.train import evaluate_retrieval, finish_run\n\nmetrics, emb = evaluate_retrieval(exp)\nrecord = finish_run(RUN_DIR, NOTEBOOK, CONFIG, history, metrics)\n\n[done] results in C:\\Users\\soura\\Code\\2026\\trimodal-loss\\runs\\02_spherical_triangle_loss\\20260709-191540\n  sketch2photo_R@10_category             1.0000\n  sketch2photo_R@10_instance             0.9810\n  sketch2photo_R@1_category              0.8571\n  sketch2photo_R@1_instance              0.3429\n  sketch2photo_R@5_category              0.9714\n  sketch2photo_R@5_instance              0.9143\n  sketchtext2photo_R@10_category         1.0000\n  sketchtext2photo_R@10_instance         1.0000\n  sketchtext2photo_R@1_category          0.9048\n  sketchtext2photo_R@1_instance          0.4476\n  sketchtext2photo_R@5_category          1.0000\n  sketchtext2photo_R@5_instance          0.9810",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "02 · Spherical-triangle regularizer"
+    ]
+  },
+  {
+    "objectID": "02_spherical_triangle_loss.html#qualitative-results-10-best-10-worst-triads",
+    "href": "02_spherical_triangle_loss.html#qualitative-results-10-best-10-worst-triads",
+    "title": "02 — Spherical-Triangle Area Regularizer",
+    "section": "Qualitative results — 10 best & 10 worst triads",
+    "text": "Qualitative results — 10 best & 10 worst triads\nEvery held-out sketch query is ranked by where its correct photo lands in the sketch→photo gallery ranking. Below we render the 10 worst queries (hardest first — the ones to interrogate) and the 10 best (top-1 hits), each as a triad [query sketch | ground-truth photo | top-1 retrieved photo]. A green top-1 title is a hit, red is a miss; the worst-performing classes are printed underneath so systematic failure modes (a class or a source the model can’t match) are visible.\n\nfrom lib.train import show_good_bad_triads\n\nranked_rows = show_good_bad_triads(exp, emb, RUN_DIR, k_show=10)\n# hardest 10, as a table\nprint(\"\\nHardest 10 queries (worst first):\")\nprint(f\"{'class':16s}{'source':10s}{'rank':&gt;5s}{'gt_sim':&gt;9s}{'top1_sim':&gt;9s}\")\n_cn = {t.class_id: t.class_name for t in ds_test.triples}\nfor r in ranked_rows[:10]:\n    print(f\"{_cn.get(r['class_id'],'?'):16s}{r['source']:10s}{r['rank']:5d}\"\n          f\"{r['gt_sim']:9.3f}{r['top1_sim']:9.3f}\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWorst-performing classes (by miss count, rank&gt;0): [('jellyfish', 17), ('duck', 15), ('pizza', 9), ('bread', 7), ('snail', 6), ('crab', 6), ('flower', 5), ('mushroom', 4)]\nMean rank 1.80  |  top-1 hit rate 0.343\n\nHardest 10 queries (worst first):\nclass           source     rank   gt_sim top1_sim\nduck            real         15    0.439    0.565\njellyfish       real         11    0.453    0.602\njellyfish       real          6    0.500    0.688\njellyfish       real          6    0.567    0.711\njellyfish       real          6    0.592    0.726\nflower          real          6    0.445    0.569\njellyfish       real          5    0.527    0.623\nflower          real          5    0.512    0.605\nduck            real          5    0.568    0.655\nduck            real          4    0.491    0.598\n\n\n\n# Cross-notebook comparison — latest run of each notebook (valid only when\n# dataset / backbone / steps / seed match across rows)\nfrom lib.run_utils import latest_metrics_per_notebook\n\ncols = [\"sketch2photo_R@1_instance\", \"sketch2photo_R@5_instance\",\n        \"sketch2photo_R@1_category\", \"sketchtext2photo_R@1_instance\"]\nshort = [\"s2p R@1 inst\", \"s2p R@5 inst\", \"s2p R@1 cat\", \"s+t2p R@1 inst\"]\nlatest = latest_metrics_per_notebook()\nprint(f\"{'notebook':32s}\" + \"\".join(f\"{c:&gt;16s}\" for c in short))\nfor nb, rec in sorted(latest.items()):\n    m = rec.get(\"metrics\", {})\n    print(f\"{nb:32s}\" + \"\".join(f\"{m.get(c, float('nan')):16.4f}\" for c in cols)\n          + f\"   [{rec.get('dataset','?')}/{rec.get('backbone','?')}/{rec.get('steps','?')} steps]\")\n\nnotebook                            s2p R@1 inst    s2p R@5 inst     s2p R@1 cat  s+t2p R@1 inst\n00_data_and_adaptation                    0.3429          0.9143          0.8857          0.5048   [sketchy/clip/60 steps]\n01_frechet_mean_loss                      0.2952          0.8571          0.8381          0.3905   [sketchy/clip/60 steps]\n02_spherical_triangle_loss                0.3429          0.9143          0.8571          0.4476   [sketchy/clip/60 steps]\n03_vmf_loss                               0.2857          0.8857          0.8762          0.4190   [sketchy/clip/600 steps]\n\n\nCaveats: shape-only term — degenerate configurations are clamped inside the loss; smoke-scale numbers are plumbing checks (paper.md A5).",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "02 · Spherical-triangle regularizer"
+    ]
+  },
+  {
+    "objectID": "00_data_and_adaptation.html",
+    "href": "00_data_and_adaptation.html",
+    "title": "00 — Data & Cross-Domain Adaptation (InfoNCE baseline)",
+    "section": "",
+    "text": "Starter notebook for the trimodal spherical-loss investigation (see paper.md):\nCLI: python run.py 00 (add --smoke for a seconds-long toy run). Each run writes config.json, metrics.json, history.json and figures into runs/00_data_and_adaptation/&lt;timestamp&gt;/.\n%matplotlib inline\n# ============================ CONFIG ============================\n# Edit here, or override headlessly:   python run.py 00 --set steps=200 dataset=mock\n# All keys + defaults live in lib/config.py; TRIMODAL_* env vars override them.\nimport sys, pathlib\n_p = pathlib.Path.cwd()\nif not (_p / \"lib\").exists() and (_p / \"trimodal-loss\" / \"lib\").exists():\n    _p = _p / \"trimodal-loss\"          # allow launching jupyter from the repo root\nsys.path.insert(0, str(_p))\n\nfrom lib.config import get_config\nfrom lib.run_utils import new_run_dir\n\nNOTEBOOK = \"00_data_and_adaptation\"\nCONFIG = get_config()                  # e.g. get_config(dataset=\"mock\", backbone=\"toy\")\nRUN_DIR = new_run_dir(NOTEBOOK)        # every run gets its own results folder\nprint(\"run dir:\", RUN_DIR)\nfor k, v in sorted(CONFIG.items()):\n    print(f\"  {k:26s} {v}\")\n\nrun dir: C:\\Users\\soura\\Code\\2026\\trimodal-loss\\runs\\00_data_and_adaptation\\20260709-191459\n  backbone                   clip\n  batch_size                 24\n  clip_model                 ViT-B-32\n  clip_pretrained            openai\n  data_root                  C:\\Users\\soura\\Code\\2026\\trimodal-loss\\data\n  dataset                    sketchy\n  device                     auto\n  eval_max_queries           400\n  image_size                 224\n  kappa_init                 100.0\n  kappa_lr                   1.0\n  karcher_exact              True\n  karcher_iters              8\n  lambda_frechet             1.0\n  lambda_triangle            1.0\n  lambda_vmf                 0.05\n  lora_alpha                 16.0\n  lora_rank                  8\n  lr                         0.001\n  max_instances_per_class    12\n  num_classes                8\n  recall_ks                  (1, 5, 10)\n  seed                       42\n  sketches_per_photo         3\n  steps                      60\n  temperature                0.07\n  triplet_margin0            0.2\n  vmf_instances_per_batch    8\n  vmf_triples_per_instance   3\n  w_st                       0.5\n  w_sv                       1.0\n  w_triplet                  0.5\n  w_vt                       0.25",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "00 · Data & adaptation (baseline)"
+    ]
+  },
+  {
+    "objectID": "00_data_and_adaptation.html#dataset",
+    "href": "00_data_and_adaptation.html#dataset",
+    "title": "00 — Data & Cross-Domain Adaptation (InfoNCE baseline)",
+    "section": "1. Dataset",
+    "text": "1. Dataset\nSketchy: ~12,500 photos / 125 classes / ≥5 human sketches per photo — the best fit for per-instance κ estimation, but it has no native captions, so text is a weak class prompt (\"a photo of a {class}\"), flagged as pseudo-text (paper.md A1). The split is at instance level — a photo and all its sketches land on the same side (no leakage).\n\n# Data (download-or-mock) + frozen backbone + LoRA sketch path — shared by all notebooks\nfrom lib.train import setup_experiment\n\nexp = setup_experiment(CONFIG)\nmodel, ds_train, ds_test = exp[\"model\"], exp[\"ds_train\"], exp[\"ds_test\"]\nprint(\"embed dim:\", model.embed_dim,\n      \"| trainable params:\", f\"{sum(p.numel() for p in model.trainable_parameters()):,}\")\n\n[setup] device=cuda\n[data] using Sketchy HF mirror (justpers/sketchy) at C:\\Users\\soura\\Code\\2026\\trimodal-loss\\data\\sketchy_hf — real human sketches, GENERATED captions (pseudo-text)\n\n\nC:\\ProgramData\\miniconda3\\Lib\\site-packages\\tqdm\\auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html\n  from .autonotebook import tqdm as notebook_tqdm\nC:\\Users\\soura\\AppData\\Roaming\\Python\\Python313\\site-packages\\open_clip\\factory.py:450: UserWarning: QuickGELU mismatch between final model config (quick_gelu=False) and pretrained tag 'openai' (quick_gelu=True).\n  warnings.warn(\n\n\n[model] CLIP ViT-B-32 frozen; LoRA r=8 injected into 24 MLP linears\n[setup] dataset=sketchy-hf  triples=288 (real=288, synthetic=0)  train=183 test=105\nembed dim: 512 | trainable params: 737,280\n\n\n\n# A few (sketch, photo, caption) samples with their source flags — sanity-check the data\nimport matplotlib.pyplot as plt\nfrom PIL import Image\n\nrows = 4\nfig, axes = plt.subplots(rows, 2, figsize=(6, 3 * rows))\nstep = max(1, len(ds_train.triples) // rows)\nfor r in range(rows):\n    t = ds_train.triples[r * step]\n    axes[r, 0].imshow(Image.open(t.sketch_path)); axes[r, 0].set_title(f\"sketch  [source={t.source}]\", fontsize=9)\n    axes[r, 1].imshow(Image.open(t.photo_path)); axes[r, 1].set_title(t.caption, fontsize=9)\n    for ax in axes[r]:\n        ax.axis(\"off\")\nfig.tight_layout(); fig.savefig(RUN_DIR / \"sample_triples.png\", dpi=110); plt.show()",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "00 · Data & adaptation (baseline)"
+    ]
+  },
+  {
+    "objectID": "00_data_and_adaptation.html#cross-domain-adaptation-with-the-baseline-loss",
+    "href": "00_data_and_adaptation.html#cross-domain-adaptation-with-the-baseline-loss",
+    "title": "00 — Data & Cross-Domain Adaptation (InfoNCE baseline)",
+    "section": "2. Cross-domain adaptation with the baseline loss",
+    "text": "2. Cross-domain adaptation with the baseline loss\nOnly the LoRA parameters train; photo & text encoders are frozen CLIP. The baseline is a weighted sum of three symmetric InfoNCE terms (s↔︎v, s↔︎t, v↔︎t) plus an adaptive-margin sketch–photo triplet where the margin shrinks for semantically close concepts (margin_ij = m0·(1 − cos(t_i, t_j)) — one simple instantiation, paper.md A6).\n\nfrom lib.losses import build_loss\nfrom lib.train import train\n\nloss_module = build_loss(\"baseline\", CONFIG, model.embed_dim)\nhistory = train(exp, loss_module)\n\n[train] 737,280 trainable params, 60 steps\n  step    0  loss 4.3550    (1s)\n  step    6  loss 3.1173    (2s)\n  step   12  loss 2.5683    (2s)\n  step   18  loss 2.2442    (2s)\n  step   24  loss 1.8831    (3s)\n  step   30  loss 1.6457    (3s)\n  step   36  loss 1.5642    (4s)\n  step   42  loss 1.4090    (4s)\n  step   48  loss 1.3195    (4s)\n  step   54  loss 1.1103    (5s)\n  step   59  loss 1.0815    (5s)",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "00 · Data & adaptation (baseline)"
+    ]
+  },
+  {
+    "objectID": "00_data_and_adaptation.html#retrieval-evaluation",
+    "href": "00_data_and_adaptation.html#retrieval-evaluation",
+    "title": "00 — Data & Cross-Domain Adaptation (InfoNCE baseline)",
+    "section": "3. Retrieval evaluation",
+    "text": "3. Retrieval evaluation\nPer-instance (exact paired photo) and per-category (any same-class photo) Recall@K, for sketch-only and composite sketch+text queries (normalize(s + t)).\n\nfrom lib.train import evaluate_retrieval, finish_run\n\nmetrics, emb = evaluate_retrieval(exp)\nrecord = finish_run(RUN_DIR, NOTEBOOK, CONFIG, history, metrics)\n\n[done] results in C:\\Users\\soura\\Code\\2026\\trimodal-loss\\runs\\00_data_and_adaptation\\20260709-191459\n  sketch2photo_R@10_category             0.9905\n  sketch2photo_R@10_instance             0.9810\n  sketch2photo_R@1_category              0.8857\n  sketch2photo_R@1_instance              0.3429\n  sketch2photo_R@5_category              0.9714\n  sketch2photo_R@5_instance              0.9143\n  sketchtext2photo_R@10_category         1.0000\n  sketchtext2photo_R@10_instance         1.0000\n  sketchtext2photo_R@1_category          0.9333\n  sketchtext2photo_R@1_instance          0.5048\n  sketchtext2photo_R@5_category          1.0000\n  sketchtext2photo_R@5_instance          0.9524",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "00 · Data & adaptation (baseline)"
+    ]
+  },
+  {
+    "objectID": "00_data_and_adaptation.html#qualitative-results-10-best-10-worst-triads",
+    "href": "00_data_and_adaptation.html#qualitative-results-10-best-10-worst-triads",
+    "title": "00 — Data & Cross-Domain Adaptation (InfoNCE baseline)",
+    "section": "Qualitative results — 10 best & 10 worst triads",
+    "text": "Qualitative results — 10 best & 10 worst triads\nEvery held-out sketch query is ranked by where its correct photo lands in the sketch→photo gallery ranking. Below we render the 10 worst queries (hardest first — the ones to interrogate) and the 10 best (top-1 hits), each as a triad [query sketch | ground-truth photo | top-1 retrieved photo]. A green top-1 title is a hit, red is a miss; the worst-performing classes are printed underneath so systematic failure modes (a class or a source the model can’t match) are visible.\n\nfrom lib.train import show_good_bad_triads\n\nranked_rows = show_good_bad_triads(exp, emb, RUN_DIR, k_show=10)\n# hardest 10, as a table\nprint(\"\\nHardest 10 queries (worst first):\")\nprint(f\"{'class':16s}{'source':10s}{'rank':&gt;5s}{'gt_sim':&gt;9s}{'top1_sim':&gt;9s}\")\n_cn = {t.class_id: t.class_name for t in ds_test.triples}\nfor r in ranked_rows[:10]:\n    print(f\"{_cn.get(r['class_id'],'?'):16s}{r['source']:10s}{r['rank']:5d}\"\n          f\"{r['gt_sim']:9.3f}{r['top1_sim']:9.3f}\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWorst-performing classes (by miss count, rank&gt;0): [('jellyfish', 17), ('duck', 12), ('snail', 10), ('pizza', 9), ('crab', 7), ('flower', 5), ('bread', 5), ('mushroom', 4)]\nMean rank 1.83  |  top-1 hit rate 0.343\n\nHardest 10 queries (worst first):\nclass           source     rank   gt_sim top1_sim\njellyfish       real         18    0.095    0.272\nduck            real         11    0.131    0.255\nsnail           real          7    0.166    0.278\njellyfish       real          6    0.253    0.429\njellyfish       real          6    0.270    0.425\njellyfish       real          6    0.187    0.309\nflower          real          6    0.167    0.211\nduck            real          5    0.200    0.249\nduck            real          5    0.207    0.250\njellyfish       real          4    0.250    0.357\n\n\n\n# Qualitative check: query sketch (left) -&gt; top-5 photos; \"MATCH\" = exact instance hit\nimport matplotlib.pyplot as plt\nfrom PIL import Image\n\nphoto_of = {}\nfor t in ds_test.triples:\n    photo_of.setdefault(t.instance_id, t.photo_path)\nsim = emb[\"sketch\"] @ emb[\"gallery\"].t()\nqs = list(range(0, len(emb[\"meta\"]), max(1, len(emb[\"meta\"]) // 4)))[:4]\nfig, axes = plt.subplots(len(qs), 6, figsize=(13, 2.4 * len(qs)))\nfor r, q in enumerate(qs):\n    axes[r, 0].imshow(Image.open(ds_test.triples[q].sketch_path))\n    axes[r, 0].set_title(\"query sketch\", fontsize=8)\n    top = sim[q].argsort(descending=True)[:5]\n    for c, g in enumerate(top.tolist(), start=1):\n        inst = emb[\"gallery_instances\"][g]\n        axes[r, c].imshow(Image.open(photo_of[inst]))\n        if inst == emb[\"meta\"][q][\"instance_id\"]:\n            axes[r, c].set_title(\"MATCH\", fontsize=8, color=\"green\")\n    for ax in axes[r]:\n        ax.axis(\"off\")\nfig.tight_layout(); fig.savefig(RUN_DIR / \"retrieval_demo.png\", dpi=110); plt.show()",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "00 · Data & adaptation (baseline)"
+    ]
+  },
+  {
+    "objectID": "00_data_and_adaptation.html#caveats",
+    "href": "00_data_and_adaptation.html#caveats",
+    "title": "00 — Data & Cross-Domain Adaptation (InfoNCE baseline)",
+    "section": "Caveats",
+    "text": "Caveats\n\nDefault config is a small smoke-scale subset (paper.md A5) — treat numbers as plumbing checks, not results. Scale num_classes / max_instances_per_class / steps up for real runs.\nOn the mock fallback everything is procedural; no scientific conclusion is valid (A2).\nNext: 01_frechet_mean_loss / 02_spherical_triangle_loss / 03_vmf_loss train the three spherical framings on this exact setup and write comparable metrics.json files.",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "00 · Data & adaptation (baseline)"
+    ]
+  },
+  {
+    "objectID": "paper.html",
+    "href": "paper.html",
+    "title": "",
+    "section": "",
+    "text": "Code",
+    "crumbs": [
+      "Home",
+      "Working paper"
+    ]
+  },
+  {
+    "objectID": "paper.html#problem-statement",
+    "href": "paper.html#problem-statement",
+    "title": "",
+    "section": "1. Problem statement",
+    "text": "1. Problem statement\nSketch-based image retrieval with a text bridge trains three encoders — sketch s, photo v, text t — into a shared embedding space. The standard recipe is a weighted sum of three symmetric pairwise InfoNCE terms (s↔︎v, s↔︎t, v↔︎t), optionally plus a sketch–photo triplet term, on a frozen CLIP backbone with LoRA/adapters on the sketch path.\nNormalized CLIP-style embeddings live on the unit hypersphere S^{d-1}, so cosine-similarity InfoNCE is already a spherical objective. The question this project asks is narrower and sharper:\n\nDoes making the spherical geometry explicit at the triple level — treating each concept’s (s, v, t) as three points on S^{d-1} with a joint geometric objective — beat the plain sum of pairwise terms, which optimizes the three angles independently?\n\nWe deliberately use directional statistics (Fréchet means, geodesic distances, spherical excess, von Mises–Fisher densities), not literal spherical coordinates φ₁…φ_{d-1}. Hyperspherical coordinates are singular at the poles and ill-conditioned in high dimensions (the Jacobian involves products of sines that vanish exponentially in d); every quantity we need is available coordinate-free from dot products.",
+    "crumbs": [
+      "Home",
+      "Working paper"
+    ]
+  },
+  {
+    "objectID": "paper.html#the-three-loss-framings",
+    "href": "paper.html#the-three-loss-framings",
+    "title": "",
+    "section": "2. The three loss framings",
+    "text": "2. The three loss framings\nThroughout, embeddings are L2-normalized: s, v, t ∈ S^{d-1}. Geodesic distance is the angle: d_g(x, y) = arccos(x·y).\n\n2.1 Fréchet-mean anchor (01_frechet_mean_loss.ipynb)\nFor each concept’s triple, compute the Fréchet/Karcher mean m = argmin_μ Σ d_g(μ, x_i)², and pull all three modalities toward m:\nL_frechet = (1/3) Σ_{x ∈ {s,v,t}} d_g(x, m)²\nThe anchor is the group’s own consensus, so no modality is privileged — unlike triplet losses anchored on sketch or text. For a tight cluster the normalized arithmetic mean approximates the Karcher mean to second order; we implement both the fast approximation and the true iterative version (Riemannian gradient descent with exp/log maps) and expose a switch.\nDesign choices (flagged): - The anchor m is detached from the graph (treated as a target). Letting gradients flow through m is valid but makes the term a pure variance minimizer that can be satisfied by collapse; the contrastive terms prevent collapse either way, but a detached anchor makes the term’s role (“pull toward current consensus”) cleaner and cheaper. - Used as a regularizer: L = L_InfoNCE-sum + λ_f · L_frechet. Alone it has no between-concept repulsion.\n\n\n2.2 Spherical-triangle area regularizer (02_spherical_triangle_loss.ipynb)\ns, v, t are vertices of a geodesic triangle on S^{d-1} (any three points span a ≤3-dim subspace, so the 2-sphere machinery applies exactly). By Girard’s theorem its area equals the spherical excess E = A + B + C − π. E → 0 when the three points become collinear on a great circle (or coincide). Minimizing\nL_tri = E(s, v, t)\ncouples the three angles that a pairwise-InfoNCE sum treats independently: it penalizes “wide” configurations where each pairwise angle is moderate but the triple is spread in two directions. We compute E with L’Huilier’s theorem (numerically stable, works entirely from the three side lengths):\ntan(E/4) = √[ tan(σ/2)·tan((σ−a)/2)·tan((σ−b)/2)·tan((σ−c)/2) ],\nσ = (a+b+c)/2,  a,b,c = geodesic side lengths.\nCaveats (flagged): - E = 0 does not imply the three points are close — only coplanar-with- origin (near a common great circle). So L_tri is strictly a shape regularizer and must accompany attraction terms. This is also its interest: it adds information pairwise terms don’t carry. - Degenerate triangles (two vertices nearly identical) need clamping; implemented with epsilon-clamps inside the tangents and arccos.\n\n\n2.3 von Mises–Fisher with per-modality concentration (03_vmf_loss.ipynb) — primary framing\nModel each concept c as a vMF distribution on S^{d-1} with shared mean direction μ_c and per-modality concentration κ_m, m ∈ {sketch, photo, text}:\np(x | μ_c, κ_m) = C_d(κ_m) · exp(κ_m · μ_cᵀ x)\nThe loss is the negative log-likelihood of each embedding under its concept’s vMF with its modality’s κ:\nL_vMF = Σ_m [ −κ_m · μ_cᵀ x_m − log C_d(κ_m) ]\nwith κ_m learnable (softplus-parameterized scalars). This is the framing we care most about because:\n\nSketch abstraction variance falls out as low κ_sketch. Five people draw the same photo five ways; the sketch cap on the sphere is wider than the photo cap. κ_sketch &lt; κ_photo is a prediction this framing makes and we can test it.\nκ acts as a learned per-modality uncertainty weight: the gradient on x_m is scaled by κ_m, so noisy modalities are automatically down-weighted — replacing hand-tuned loss weights λ_sv, λ_st, λ_vt. (This is exactly the spherical analogue of heteroscedastic uncertainty weighting à la Kendall & Gal, with −log C_d(κ) as the regularizer that stops κ → 0.)\n\nEarly empirical observation (smoke-scale, Sketchy-HF mirror): with a frozen photo/text tower and a trainable sketch path, learned κ came out highest for sketch (κ_s 607 &gt; κ_t 550 &gt; κ_v 534 after 600 steps) — the opposite of the naive prediction. Mechanism: sketches are the only modality the optimizer can move, so the vMF term trains them toward the consensus μ and κ_sketch measures post-adaptation concentration on training data, not intrinsic modality noise. The κ_sketch &lt; κ_photo prediction should therefore be tested (a) with encoders at rest, or (b) via held-out per-instance κ̂ (Banerjee) on the test split — which the diagnostic section of 03_vmf_loss.ipynb provides. Needs confirmation at real scale.\nNumerical notes (flagged, important): - log C_d(κ) involves log I_{d/2−1}(κ), the log modified Bessel function with order ν = d/2 − 1 (ν = 255 for d = 512). We implement it with the uniform asymptotic expansion (Abramowitz & Stegun 9.7.7), which is accurate for large ν and differentiable in κ; we validate it against scipy.special.ive at fp64 in the notebook. - μ_c per concept: for Sketchy, ≥5 sketches + 1 photo + text per instance let us estimate μ_c (and even per-instance κ̂_sketch via Banerjee et al.’s approximation κ̂ ≈ R̄(d − R̄²)/(1 − R̄²)) within a batch. For single-triple datasets, μ_c is just the (Karcher or normalized) mean of the triple — degenerate but still usable, with κ estimated at class/global level. - Like the other two, used alongside InfoNCE: vMF-NLL handles within-concept geometry and uncertainty; InfoNCE handles between-concept repulsion. A fully generative alternative (vMF mixture with contrastive normalization over concepts in the batch) is noted as future work.\n\n\n2.4 Baseline to beat\nWeighted sum of three symmetric InfoNCE terms (s↔︎v, s↔︎t, v↔︎t) + an adaptive-margin sketch–photo triplet: margin_ij = m₀ · (1 − cos(t_i, t_j)), i.e. semantically close concepts (per the text bridge) get a smaller required margin. (Flagged: this specific adaptive-margin form is our simple instantiation of the idea; the literature has several variants.)\nBackbone: frozen CLIP (open_clip ViT-B/32 by default); LoRA on the sketch path only — same visual tower, low-rank adapters that are toggled on for sketch forward passes and off for photo forward passes, so photo/text embeddings stay exactly CLIP’s and text remains the zero-shot semantic bridge.",
+    "crumbs": [
+      "Home",
+      "Working paper"
+    ]
+  },
+  {
+    "objectID": "paper.html#dataset-selection",
+    "href": "paper.html#dataset-selection",
+    "title": "",
+    "section": "3. Dataset selection",
+    "text": "3. Dataset selection\n\n3.1 The core constraint\nTrue sketch+photo+text triplets barely exist. Photo–text pairs exist at web scale (that’s CLIP), and sketch–photo pairs exist at dataset scale, but datasets where a human drew a sketch of a specific photo that also has a human caption are nearly a null set. Every design decision below is downstream of this fact.\n\n\n3.2 Candidate datasets\n\n\n\n\n\n\n\n\n\n\n\nDataset\nSize\nSketch type\nText\nTriple?\nRole here\n\n\n\n\nSketchy\n~12,500 photos, 125 classes, ≥5 sketches/photo\nhuman, object-level\n✗ (class labels only)\npseudo (generated text)\nprototyping + vMF κ estimation\n\n\nFS-COCO\n~10,000 scene sketches (7k/3k split)\nhuman freehand, scene-level, stroke timing\n✓ human captions\n✓ real\nprimary benchmark\n\n\nSketchyCOCO\n~14k triples\nsynthetic (composed from Sketchy-like parts)\nMS-COCO captions\npseudo (synthetic sketch)\nsecondary, with caveat\n\n\nCSTBIR\n~2M composite sketch+text queries, 108k scenes\nmixed\n✓ (query text)\nquery-style\noptional scale-up\n\n\n\nSketchy (Sangkloy et al. 2016): ~12,500 photos across 125 object classes with at least 5 human sketches drawn per photo (~75k sketches). Object-level, genuinely human-drawn. No native captions — text must be weak class-level prompts (“a photo of a {class}”) or generated captions (BLIP-style), both flagged as pseudo-text. Its killer feature for us: ≥5 sketches per photo means per-instance κ_sketch is estimable — Sketchy is the best fit for the vMF framing, which is exactly why we prototype there despite the weak text.\nFS-COCO (Chowdhury et al. 2022): ~10,000 human freehand scene sketches, each paired with the photo it depicts and a human caption, 7k/3k train/test split, with stroke timing available (unused here, but interesting for future curriculum/partial-sketch work). This is, to our knowledge, the one real human trimodal dataset at usable scale → primary benchmark; any headline claim about trimodal losses must hold here. Limitation: one sketch per scene, so κ_sketch is only estimable at class/global level, not per-instance.\nSketchyCOCO (Gao et al. 2020): ~14k sketch–photo–caption triples with MS-COCO captions, but the sketches are synthetic — composed by pasting class-conditional sketch parts into scene layouts — and most scenes contain fewer than one salient foreground instance’s worth of genuine sketch variation. Use as a secondary robustness benchmark, never as the source of a headline claim, and never for κ_sketch estimation (see §3.4).\nCSTBIR (composite sketch+text retrieval): ~2M composite sketch+text queries over ~108k scenes. Query-style rather than triple-style, mixed sketch provenance. Optional scale-up once the losses are validated — useful for testing whether κ-weighting survives at scale, not for validating it.\n\n\n3.3 The structural tension\nThe vMF framing’s per-instance κ wants Sketchy’s multiple-sketches-per-photo structure; the Fréchet-mean and triangle framings work on any single-triple dataset. No single dataset serves both goals with real text:\n\nSketchy: right sketch multiplicity, wrong (absent) text.\nFS-COCO: right text, sketch multiplicity of 1.\n\nSo the design is: estimate what each dataset can support, claim only what FS-COCO confirms. Per-instance κ results come from Sketchy with pseudo-text (clearly labeled); the trimodal-loss comparison that matters scientifically is run on FS-COCO with class/global κ.\n\n\n3.4 Synthetic sketches: augmentation only, with a geometric warning\nSynthetic sketches (SketchyCOCO’s compositions, edge-map conversions, model-generated sketches) are usable for pretraining/augmentation only, and everything must be validated and evaluated on real sketches. The reason is geometric, and it directly attacks our losses:\n\nSynthetic sketches form a tighter, differently-centered spherical cap than real sketches. A generator has one “style”; humans have many. Mixing sources therefore (a) inflates κ_sketch — the model learns sketches are more concentrated than human sketches actually are, defeating the entire point of the vMF uncertainty weighting — and (b) offsets the Fréchet-mean / triangle anchor toward the synthetic cap center, biasing the consensus point all three modalities are pulled toward.\n\nRules encoded in the codebase: 1. κ_sketch is estimated from REAL sketches only. 2. Every sample carries a source flag (real / synthetic) end-to-end, from dataset loader to metrics. 3. FS-COCO’s fully-human triples remain the headline benchmark, whatever synthetic data is used upstream.\n\n\n3.5 Recommended progression\n\nPrototype all losses on Sketchy + generated/class captions (fast, object-level, per-instance κ available). ← this repo’s notebooks\nPort to FS-COCO for the real trimodal claim (human triples, scene-level).\nSketchyCOCO for robustness under domain shift and the synthetic-cap diagnostic at scale.\n\n\n\n3.6 Evaluation\n\nRecall@K / Acc.@K (K ∈ {1, 5, 10}) for sketch→photo retrieval, and (sketch+text)→photo for the composite query setting.\nReported per-instance (correct = the exact paired photo) and per-category (correct = any photo of the same class) — sketch retrieval results change character dramatically between these two and both are needed.\nSynthetic-vs-real cap diagnostic: per source, estimate the sketch embedding mean direction and κ̂ (Banerjee approximation); report (i) the angle between the synthetic and real cap means and (ii) κ̂ per source. If synthetic κ̂ ≫ real κ̂ or the cap angle is large, synthetic data is geometrically off-manifold and augmentation weights should drop. Implemented in 03_vmf_loss.ipynb.",
+    "crumbs": [
+      "Home",
+      "Working paper"
+    ]
+  },
+  {
+    "objectID": "paper.html#implementation-plan-this-repo",
+    "href": "paper.html#implementation-plan-this-repo",
+    "title": "",
+    "section": "4. Implementation plan (this repo)",
+    "text": "4. Implementation plan (this repo)\ntrimodal-loss/\n  paper.md                      ← this document\n  lib/                          ← shared module (data, model, sphere ops, losses, training)\n  00_data_and_adaptation.ipynb  ← data + frozen CLIP + LoRA sketch path + InfoNCE baseline + retrieval\n  01_frechet_mean_loss.ipynb    ← Fréchet/Karcher anchor loss\n  02_spherical_triangle_loss.ipynb ← spherical-excess regularizer\n  03_vmf_loss.ipynb             ← vMF with learnable per-modality κ + cap diagnostic\n  data/                         ← datasets cache (gitignore)\n  runs/&lt;notebook&gt;/&lt;timestamp&gt;/  ← every CLI run writes config.json, metrics.json, plots, executed notebook\nAll four notebooks train on the same subset with the same seed, backbone, and retrieval protocol, so numbers are directly comparable; each writes metrics.json to its own run folder.",
+    "crumbs": [
+      "Home",
+      "Working paper"
+    ]
+  },
+  {
+    "objectID": "paper.html#assumptions-caveats-consolidated",
+    "href": "paper.html#assumptions-caveats-consolidated",
+    "title": "",
+    "section": "5. Assumptions & caveats (consolidated)",
+    "text": "5. Assumptions & caveats (consolidated)\n\nA1 — Pseudo-text on Sketchy. Class-prompt text is weak; conclusions about the text modality from Sketchy are provisional until FS-COCO.\nA2 — Dataset provenance ladder. The loader tries, in order: (1) the official Sketchy tree if present in data/; (2) the Hugging Face mirror justpers/sketchy — 10,630 real human Sketchy sketch–photo pairs with generated captions, instance identity recovered by hashing the duplicated photo bytes, class labels parsed from captions by a flagged heuristic;\n\na gdown attempt at the official Google Drive archive (usually blocked);\na clearly-labeled procedurally-generated mock dataset (shape “photos” + jittered outline “sketches”) so the pipeline is smoke-testable end-to-end. No scientific conclusion is valid on mock data, and mirror-based class labels/captions are pseudo-annotations (A1).\n\nA3 — Detached Fréchet anchor (§2.1), shape-only triangle term (§2.2), hybrid vMF+InfoNCE (§2.3) are all deliberate simplifications, each flagged where implemented.\nA4 — Bessel approximation. log I_ν via uniform asymptotic expansion; validated against scipy at fp64, but κ values near 0 with small d would need the series expansion instead (not our regime).\nA5 — Small-subset smoke runs. Default configs are sized to run on CPU in minutes. Real comparisons need the full subset + GPU (pip install torch --index-url https://download.pytorch.org/whl/cu130 for the RTX 5070 Ti) and multiple seeds.\nA6 — Adaptive margin form (§2.4) is one simple instantiation.\nA7 — LoRA placement: adapters on the ViT block MLP linears (c_fc, c_proj), sketch-forward only. Attention projections are skipped because open_clip’s nn.MultiheadAttention reads its projection parameters functionally — wrapping those modules would silently no-op. qkv-LoRA would need a different attention implementation; not swept here.",
+    "crumbs": [
+      "Home",
+      "Working paper"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Trimodal (Sketch–Image–Text) Contrastive Loss via Spherical Geometry",
+    "section": "",
+    "text": "An empirical investigation into whether framing trimodal retrieval embeddings as points on the unit hypersphere S^{d−1} yields better loss functions than a plain sum of pairwise InfoNCE terms. Every notebook page is rendered with its saved outputs — plots, metrics, and κ trajectories included — so you can read the completed experiments without running anything.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#the-question",
+    "href": "index.html#the-question",
+    "title": "Trimodal (Sketch–Image–Text) Contrastive Loss via Spherical Geometry",
+    "section": "The question",
+    "text": "The question\nNormalized CLIP embeddings already live on the sphere, so cosine-InfoNCE is already spherical. Does making the geometry explicit at the triple level — treating each concept’s (sketch, photo, text) as three points with a joint geometric objective — beat the pairwise sum, which optimizes the three angles independently? See the working paper for the full design, dataset analysis, and caveats.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#the-three-framings",
+    "href": "index.html#the-three-framings",
+    "title": "Trimodal (Sketch–Image–Text) Contrastive Loss via Spherical Geometry",
+    "section": "The three framings",
+    "text": "The three framings\n\n00 · Data & adaptation — frozen CLIP + LoRA on the sketch path, the pairwise-InfoNCE + adaptive-margin baseline, and the shared retrieval protocol (per-instance and per-category Recall@K).\n01 · Fréchet-mean anchor — pull each triple toward its own Karcher-mean consensus; no modality privileged.\n02 · Spherical-triangle regularizer — minimize the geodesic-triangle area (Girard excess) to couple the three angles the pairwise sum treats independently.\n03 · von Mises–Fisher (primary framing) — a learnable per-modality concentration κ as a spherical uncertainty weight, plus the synthetic-vs-real sketch-cap diagnostic.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "index.html#how-this-site-is-built",
+    "href": "index.html#how-this-site-is-built",
+    "title": "Trimodal (Sketch–Image–Text) Contrastive Loss via Spherical Geometry",
+    "section": "How this site is built",
+    "text": "How this site is built\nNotebooks are executed locally (GPU, via run.py) and committed with their outputs; each run also writes its own runs/&lt;notebook&gt;/&lt;timestamp&gt;/ folder with config.json / metrics.json / figures. This site is published by Quarto with re-execution disabled, so it always shows exactly the outputs in the repository — no CLIP, GPU, or dataset needed to view it.\n\nCaveat: the committed runs are smoke-scale (small subset, few hundred steps) — valid as a plumbing check, not as a result. See the paper’s assumptions list (A1–A7) and the “next experiments” section of the README.",
+    "crumbs": [
+      "Home"
+    ]
+  },
+  {
+    "objectID": "00_EDA.html",
+    "href": "00_EDA.html",
+    "title": "00 — Exploratory Data Analysis: browse the trimodal datasets",
+    "section": "",
+    "text": "A no-training, no-GPU notebook to browse the sketch–photo–text data before modeling. It resolves whichever dataset the config selects (real Sketchy tree → Hugging Face mirror justpers/sketchy → procedural mock; see paper.md §3 and A2), then shows:\nCLI: python run.py EDA (see run.py). Nothing here trains; it just reads data/.\n%matplotlib inline\n# ============================ CONFIG ============================\n# Edit here, or override headlessly:   python run.py 00 --set steps=200 dataset=mock\n# All keys + defaults live in lib/config.py; TRIMODAL_* env vars override them.\nimport sys, pathlib\n_p = pathlib.Path.cwd()\nif not (_p / \"lib\").exists() and (_p / \"trimodal-loss\" / \"lib\").exists():\n    _p = _p / \"trimodal-loss\"          # allow launching jupyter from the repo root\nsys.path.insert(0, str(_p))\n\nfrom lib.config import get_config\nfrom lib.run_utils import new_run_dir\n\nNOTEBOOK = \"00_EDA\"\nCONFIG = get_config()                  # e.g. get_config(dataset=\"mock\", backbone=\"toy\")\nRUN_DIR = new_run_dir(NOTEBOOK)        # every run gets its own results folder\nprint(\"run dir:\", RUN_DIR)\nfor k, v in sorted(CONFIG.items()):\n    print(f\"  {k:26s} {v}\")\n\nrun dir: C:\\Users\\soura\\Code\\2026\\trimodal-loss\\runs\\00_EDA\\20260709-191454\n  backbone                   clip\n  batch_size                 24\n  clip_model                 ViT-B-32\n  clip_pretrained            openai\n  data_root                  C:\\Users\\soura\\Code\\2026\\trimodal-loss\\data\n  dataset                    sketchy\n  device                     auto\n  eval_max_queries           400\n  image_size                 224\n  kappa_init                 100.0\n  kappa_lr                   1.0\n  karcher_exact              True\n  karcher_iters              8\n  lambda_frechet             1.0\n  lambda_triangle            1.0\n  lambda_vmf                 0.05\n  lora_alpha                 16.0\n  lora_rank                  8\n  lr                         0.001\n  max_instances_per_class    12\n  num_classes                8\n  recall_ks                  (1, 5, 10)\n  seed                       42\n  sketches_per_photo         3\n  steps                      60\n  temperature                0.07\n  triplet_margin0            0.2\n  vmf_instances_per_batch    8\n  vmf_triples_per_instance   3\n  w_st                       0.5\n  w_sv                       1.0\n  w_triplet                  0.5\n  w_vt                       0.25\n# Resolve the dataset (download-or-mock) WITHOUT building a model\nfrom lib.data import prepare_triples, split_triples, summarize_triples\nimport json\n\ntriples, ds_name = prepare_triples(CONFIG)\ntrain_t, test_t = split_triples(triples)\nsummary = summarize_triples(triples)\nprint(f\"dataset resolved to: {ds_name}\\n\")\nprint(json.dumps({k: v for k, v in summary.items()\n                  if k not in (\"per_class\", \"instances_per_class\")}, indent=2))\nprint(\"\\ntrain/test split:\", len(train_t), \"/\", len(test_t))\n\n[data] using Sketchy HF mirror (justpers/sketchy) at C:\\Users\\soura\\Code\\2026\\trimodal-loss\\data\\sketchy_hf — real human sketches, GENERATED captions (pseudo-text)\ndataset resolved to: sketchy-hf\n\n{\n  \"n_triples\": 288,\n  \"n_instances\": 96,\n  \"n_classes\": 8,\n  \"per_source\": {\n    \"real\": 288\n  },\n  \"sketches_per_instance_hist\": {\n    \"3\": 96\n  }\n}\n\ntrain/test split: 183 / 105"
+  },
+  {
+    "objectID": "00_EDA.html#composition-per-class-counts-and-the-source-split",
+    "href": "00_EDA.html#composition-per-class-counts-and-the-source-split",
+    "title": "00 — Exploratory Data Analysis: browse the trimodal datasets",
+    "section": "1. Composition — per-class counts and the source split",
+    "text": "1. Composition — per-class counts and the source split\n\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(1, 2, figsize=(12, 4))\npc = summary[\"per_class\"]\nax[0].bar(range(len(pc)), list(pc.values()))\nax[0].set_xticks(range(len(pc))); ax[0].set_xticklabels(list(pc), rotation=60, ha=\"right\", fontsize=8)\nax[0].set(title=\"triples per class\", ylabel=\"triples\")\n\nsrc = summary[\"per_source\"]\nax[1].bar(list(src), list(src.values()), color=[\"#4c72b0\", \"#dd8452\"])\nax[1].set(title=f\"source split (real vs synthetic)  —  {summary['sketches_per_instance_hist']}\",\n          ylabel=\"triples\")\nfor i, (k, v) in enumerate(src.items()):\n    ax[1].text(i, v, str(v), ha=\"center\", va=\"bottom\")\nfig.tight_layout(); fig.savefig(RUN_DIR / \"eda_composition.png\", dpi=110); plt.show()\n\nprint(\"sketches-per-instance histogram:\", summary[\"sketches_per_instance_hist\"])\nprint(\"-&gt; per-instance κ is well-posed only where an instance has &gt;=3 sketches (paper.md §3.3)\")\n\n\n\n\n\n\n\n\nsketches-per-instance histogram: {3: 96}\n-&gt; per-instance κ is well-posed only where an instance has &gt;=3 sketches (paper.md §3.3)"
+  },
+  {
+    "objectID": "00_EDA.html#class-grid-one-representative-photo-per-class",
+    "href": "00_EDA.html#class-grid-one-representative-photo-per-class",
+    "title": "00 — Exploratory Data Analysis: browse the trimodal datasets",
+    "section": "2. Class grid — one representative photo per class",
+    "text": "2. Class grid — one representative photo per class\n\nfrom PIL import Image\n\nby_class = {}\nfor t in triples:\n    by_class.setdefault(t.class_name, t)\nclasses = list(by_class)\ncols = 4; rows = (len(classes) + cols - 1) // cols\nfig, axes = plt.subplots(rows, cols, figsize=(3 * cols, 3 * rows))\nfor ax, cls in zip(axes.flat, classes):\n    ax.imshow(Image.open(by_class[cls].photo_path)); ax.set_title(cls, fontsize=9); ax.axis(\"off\")\nfor ax in axes.flat[len(classes):]:\n    ax.axis(\"off\")\nfig.suptitle(\"one photo per class\", y=1.0); fig.tight_layout()\nfig.savefig(RUN_DIR / \"eda_class_grid.png\", dpi=110); plt.show()"
+  },
+  {
+    "objectID": "00_EDA.html#multi-sketch-spreads-abstraction-variance-within-one-instance",
+    "href": "00_EDA.html#multi-sketch-spreads-abstraction-variance-within-one-instance",
+    "title": "00 — Exploratory Data Analysis: browse the trimodal datasets",
+    "section": "3. Multi-sketch spreads — abstraction variance within one instance",
+    "text": "3. Multi-sketch spreads — abstraction variance within one instance\nThe visual intuition for the vMF framing: several people sketch the same photo differently. Wider spread ⇒ lower κ_sketch. We pick instances that have the most sketches and show the photo alongside all its sketches.\n\nfrom collections import defaultdict\nfrom PIL import Image\n\ngroups = defaultdict(list)\nfor t in triples:\n    groups[t.instance_id].append(t)\nmulti = sorted(groups.values(), key=lambda g: -len(g))[:4]   # 4 most-sketched instances\nmaxk = max(len(g) for g in multi)\nfig, axes = plt.subplots(len(multi), maxk + 1, figsize=(2.2 * (maxk + 1), 2.2 * len(multi)))\nif len(multi) == 1:\n    axes = axes.reshape(1, -1)\nfor r, g in enumerate(multi):\n    axes[r, 0].imshow(Image.open(g[0].photo_path))\n    axes[r, 0].set_title(f\"PHOTO: {g[0].class_name}\", fontsize=8, color=\"#4c72b0\"); axes[r, 0].axis(\"off\")\n    for c in range(1, maxk + 1):\n        axes[r, c].axis(\"off\")\n        if c - 1 &lt; len(g):\n            axes[r, c].imshow(Image.open(g[c - 1].sketch_path))\n            axes[r, c].set_title(f\"sketch [{g[c-1].source}]\", fontsize=7)\nfig.suptitle(\"same photo, multiple human sketches (spread ⇒ low κ_sketch)\", y=1.0)\nfig.tight_layout(); fig.savefig(RUN_DIR / \"eda_multisketch.png\", dpi=110); plt.show()"
+  },
+  {
+    "objectID": "00_EDA.html#captions-parsed-class-labels-pseudo-text-paper.md-a1",
+    "href": "00_EDA.html#captions-parsed-class-labels-pseudo-text-paper.md-a1",
+    "title": "00 — Exploratory Data Analysis: browse the trimodal datasets",
+    "section": "4. Captions & parsed class labels (pseudo-text — paper.md A1)",
+    "text": "4. Captions & parsed class labels (pseudo-text — paper.md A1)\n\nseen = set()\nprint(f\"{'class':16s}  caption (pseudo-text)\")\nprint(\"-\" * 80)\nfor t in triples:\n    if t.class_name not in seen:\n        seen.add(t.class_name)\n        print(f\"{t.class_name:16s}  {t.caption[:60]}\")\nprint(\"\\nNOTE: on the HF mirror these captions are GENERATED (BLIP-style) and the class\")\nprint(\"label is parsed from them by a heuristic; on real Sketchy there are no captions at\")\nprint(\"all and text is a class prompt. Either way text on Sketchy is pseudo-text (A1).\")\n\nclass             caption (pseudo-text)\n--------------------------------------------------------------------------------\nbread             a close up of a loaf of bread on a wooden table\ncrab              a close up of a crab on the ground with leaves\nduck              there is a duck that is swimming in the water\nflower            araffe standing on the grass in a field with a red flower\njellyfish         jellyfish in the dark with a blue glow on its face\nmushroom          there is a mushroom that is growing out of the ground\npizza             there is a pizza with pepperoni, olives, and cheese on it\nsnail             there is a snail that is sitting on the ground in the leaves\n\nNOTE: on the HF mirror these captions are GENERATED (BLIP-style) and the class\nlabel is parsed from them by a heuristic; on real Sketchy there are no captions at\nall and text is a class prompt. Either way text on Sketchy is pseudo-text (A1)."
+  },
+  {
+    "objectID": "01_frechet_mean_loss.html",
+    "href": "01_frechet_mean_loss.html",
+    "title": "01 — Fréchet-Mean Anchor Loss",
+    "section": "",
+    "text": "For each concept triple (s, v, t) on S^{d−1}, compute the Fréchet/Karcher mean m and pull all three modalities toward it: the anchor is the group’s own consensus, so no modality is privileged (paper.md §2.1). Used as a regularizer on top of the same pairwise-InfoNCE base as every other notebook, so the comparison isolates the geometry.\nDesign choices (flagged): the anchor is detached (pull-toward-current-consensus); karcher_exact=False switches to the normalized-arithmetic-mean approximation, which the sanity cell below shows is near-exact for tight clusters.\nCLI: python run.py 01 → results in runs/01_frechet_mean_loss/&lt;timestamp&gt;/.\n%matplotlib inline\n# ============================ CONFIG ============================\n# Edit here, or override headlessly:   python run.py 01 --set steps=200 dataset=mock\n# All keys + defaults live in lib/config.py; TRIMODAL_* env vars override them.\nimport sys, pathlib\n_p = pathlib.Path.cwd()\nif not (_p / \"lib\").exists() and (_p / \"trimodal-loss\" / \"lib\").exists():\n    _p = _p / \"trimodal-loss\"          # allow launching jupyter from the repo root\nsys.path.insert(0, str(_p))\n\nfrom lib.config import get_config\nfrom lib.run_utils import new_run_dir\n\nNOTEBOOK = \"01_frechet_mean_loss\"\nCONFIG = get_config()                  # e.g. get_config(dataset=\"mock\", backbone=\"toy\")\nRUN_DIR = new_run_dir(NOTEBOOK)        # every run gets its own results folder\nprint(\"run dir:\", RUN_DIR)\nfor k, v in sorted(CONFIG.items()):\n    print(f\"  {k:26s} {v}\")\n\nrun dir: C:\\Users\\soura\\Code\\2026\\trimodal-loss\\runs\\01_frechet_mean_loss\\20260709-191521\n  backbone                   clip\n  batch_size                 24\n  clip_model                 ViT-B-32\n  clip_pretrained            openai\n  data_root                  C:\\Users\\soura\\Code\\2026\\trimodal-loss\\data\n  dataset                    sketchy\n  device                     auto\n  eval_max_queries           400\n  image_size                 224\n  kappa_init                 100.0\n  kappa_lr                   1.0\n  karcher_exact              True\n  karcher_iters              8\n  lambda_frechet             1.0\n  lambda_triangle            1.0\n  lambda_vmf                 0.05\n  lora_alpha                 16.0\n  lora_rank                  8\n  lr                         0.001\n  max_instances_per_class    12\n  num_classes                8\n  recall_ks                  (1, 5, 10)\n  seed                       42\n  sketches_per_photo         3\n  steps                      60\n  temperature                0.07\n  triplet_margin0            0.2\n  vmf_instances_per_batch    8\n  vmf_triples_per_instance   3\n  w_st                       0.5\n  w_sv                       1.0\n  w_triplet                  0.5\n  w_vt                       0.25\n# Data (download-or-mock) + frozen backbone + LoRA sketch path — shared by all notebooks\nfrom lib.train import setup_experiment\n\nexp = setup_experiment(CONFIG)\nmodel, ds_train, ds_test = exp[\"model\"], exp[\"ds_train\"], exp[\"ds_test\"]\nprint(\"embed dim:\", model.embed_dim,\n      \"| trainable params:\", f\"{sum(p.numel() for p in model.trainable_parameters()):,}\")\n\n[setup] device=cuda\n[data] using Sketchy HF mirror (justpers/sketchy) at C:\\Users\\soura\\Code\\2026\\trimodal-loss\\data\\sketchy_hf — real human sketches, GENERATED captions (pseudo-text)\n\n\nC:\\ProgramData\\miniconda3\\Lib\\site-packages\\tqdm\\auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html\n  from .autonotebook import tqdm as notebook_tqdm\nC:\\Users\\soura\\AppData\\Roaming\\Python\\Python313\\site-packages\\open_clip\\factory.py:450: UserWarning: QuickGELU mismatch between final model config (quick_gelu=False) and pretrained tag 'openai' (quick_gelu=True).\n  warnings.warn(\n\n\n[model] CLIP ViT-B-32 frozen; LoRA r=8 injected into 24 MLP linears\n[setup] dataset=sketchy-hf  triples=288 (real=288, synthetic=0)  train=183 test=105\nembed dim: 512 | trainable params: 737,280",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "01 · Fréchet-mean anchor loss"
+    ]
+  },
+  {
+    "objectID": "01_frechet_mean_loss.html#sanity-normalized-mean-vs.-iterative-karcher-mean",
+    "href": "01_frechet_mean_loss.html#sanity-normalized-mean-vs.-iterative-karcher-mean",
+    "title": "01 — Fréchet-Mean Anchor Loss",
+    "section": "Sanity: normalized mean vs. iterative Karcher mean",
+    "text": "Sanity: normalized mean vs. iterative Karcher mean\n\n# For tight clusters the normalized arithmetic mean approximates the Karcher mean\n# to 2nd order; verify the iterative version agrees (paper.md §2.1)\nimport torch\nfrom lib import sphere\n\nbase = torch.randn(256, 1, 512)\npts = sphere.normalize(base + 0.15 * torch.randn(256, 3, 512))   # 256 tight triples\napprox = sphere.karcher_mean(pts, exact=False)\nexact = sphere.karcher_mean(pts, exact=True)\ngap = torch.rad2deg(sphere.geodesic_distance(approx, exact))\nprint(f\"angle(approx, exact) over 256 tight triples:  max {gap.max():.5f}°,  mean {gap.mean():.5f}°\")\n\nangle(approx, exact) over 256 tight triples:  max 0.03426°,  mean 0.02800°",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "01 · Fréchet-mean anchor loss"
+    ]
+  },
+  {
+    "objectID": "01_frechet_mean_loss.html#train-with-the-fréchet-mean-anchor-term",
+    "href": "01_frechet_mean_loss.html#train-with-the-fréchet-mean-anchor-term",
+    "title": "01 — Fréchet-Mean Anchor Loss",
+    "section": "Train with the Fréchet-mean anchor term",
+    "text": "Train with the Fréchet-mean anchor term\n\nfrom lib.losses import build_loss\nfrom lib.train import train\n\nloss_module = build_loss(\"frechet\", CONFIG, model.embed_dim)\nhistory = train(exp, loss_module)\n\n[train] 737,280 trainable params, 60 steps\n  step    0  loss 4.7662    (1s)\n  step    6  loss 3.1846    (2s)\n  step   12  loss 2.8672    (2s)\n  step   18  loss 2.4188    (3s)\n  step   24  loss 2.2710    (3s)\n  step   30  loss 2.0053    (3s)\n  step   36  loss 2.1101    (4s)\n  step   42  loss 1.9686    (4s)\n  step   48  loss 1.6850    (5s)\n  step   54  loss 1.5975    (5s)\n  step   59  loss 1.5917    (5s)\n\n\n\nfrom lib.train import evaluate_retrieval, finish_run\n\nmetrics, emb = evaluate_retrieval(exp)\nrecord = finish_run(RUN_DIR, NOTEBOOK, CONFIG, history, metrics)\n\n[done] results in C:\\Users\\soura\\Code\\2026\\trimodal-loss\\runs\\01_frechet_mean_loss\\20260709-191521\n  sketch2photo_R@10_category             0.9905\n  sketch2photo_R@10_instance             0.9905\n  sketch2photo_R@1_category              0.8381\n  sketch2photo_R@1_instance              0.2952\n  sketch2photo_R@5_category              0.9429\n  sketch2photo_R@5_instance              0.8571\n  sketchtext2photo_R@10_category         1.0000\n  sketchtext2photo_R@10_instance         1.0000\n  sketchtext2photo_R@1_category          0.8952\n  sketchtext2photo_R@1_instance          0.3905\n  sketchtext2photo_R@5_category          1.0000\n  sketchtext2photo_R@5_instance          0.9524",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "01 · Fréchet-mean anchor loss"
+    ]
+  },
+  {
+    "objectID": "01_frechet_mean_loss.html#qualitative-results-10-best-10-worst-triads",
+    "href": "01_frechet_mean_loss.html#qualitative-results-10-best-10-worst-triads",
+    "title": "01 — Fréchet-Mean Anchor Loss",
+    "section": "Qualitative results — 10 best & 10 worst triads",
+    "text": "Qualitative results — 10 best & 10 worst triads\nEvery held-out sketch query is ranked by where its correct photo lands in the sketch→photo gallery ranking. Below we render the 10 worst queries (hardest first — the ones to interrogate) and the 10 best (top-1 hits), each as a triad [query sketch | ground-truth photo | top-1 retrieved photo]. A green top-1 title is a hit, red is a miss; the worst-performing classes are printed underneath so systematic failure modes (a class or a source the model can’t match) are visible.\n\nfrom lib.train import show_good_bad_triads\n\nranked_rows = show_good_bad_triads(exp, emb, RUN_DIR, k_show=10)\n# hardest 10, as a table\nprint(\"\\nHardest 10 queries (worst first):\")\nprint(f\"{'class':16s}{'source':10s}{'rank':&gt;5s}{'gt_sim':&gt;9s}{'top1_sim':&gt;9s}\")\n_cn = {t.class_id: t.class_name for t in ds_test.triples}\nfor r in ranked_rows[:10]:\n    print(f\"{_cn.get(r['class_id'],'?'):16s}{r['source']:10s}{r['rank']:5d}\"\n          f\"{r['gt_sim']:9.3f}{r['top1_sim']:9.3f}\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWorst-performing classes (by miss count, rank&gt;0): [('jellyfish', 17), ('snail', 11), ('duck', 11), ('bread', 9), ('pizza', 9), ('flower', 6), ('crab', 6), ('mushroom', 5)]\nMean rank 2.04  |  top-1 hit rate 0.295\n\nHardest 10 queries (worst first):\nclass           source     rank   gt_sim top1_sim\nflower          real         10    0.281    0.344\njellyfish       real          8    0.303    0.453\nmushroom        real          8    0.337    0.410\njellyfish       real          6    0.406    0.580\njellyfish       real          6    0.360    0.492\njellyfish       real          6    0.433    0.554\nsnail           real          6    0.300    0.404\nflower          real          6    0.330    0.419\nduck            real          5    0.447    0.551\nbread           real          5    0.289    0.381\n\n\n\n# Cross-notebook comparison — latest run of each notebook (valid only when\n# dataset / backbone / steps / seed match across rows)\nfrom lib.run_utils import latest_metrics_per_notebook\n\ncols = [\"sketch2photo_R@1_instance\", \"sketch2photo_R@5_instance\",\n        \"sketch2photo_R@1_category\", \"sketchtext2photo_R@1_instance\"]\nshort = [\"s2p R@1 inst\", \"s2p R@5 inst\", \"s2p R@1 cat\", \"s+t2p R@1 inst\"]\nlatest = latest_metrics_per_notebook()\nprint(f\"{'notebook':32s}\" + \"\".join(f\"{c:&gt;16s}\" for c in short))\nfor nb, rec in sorted(latest.items()):\n    m = rec.get(\"metrics\", {})\n    print(f\"{nb:32s}\" + \"\".join(f\"{m.get(c, float('nan')):16.4f}\" for c in cols)\n          + f\"   [{rec.get('dataset','?')}/{rec.get('backbone','?')}/{rec.get('steps','?')} steps]\")\n\nnotebook                            s2p R@1 inst    s2p R@5 inst     s2p R@1 cat  s+t2p R@1 inst\n00_data_and_adaptation                    0.3429          0.9143          0.8857          0.5048   [sketchy/clip/60 steps]\n01_frechet_mean_loss                      0.2952          0.8571          0.8381          0.3905   [sketchy/clip/60 steps]\n02_spherical_triangle_loss                0.3619          0.9048          0.8286          0.4667   [sketchy/clip/200 steps]\n03_vmf_loss                               0.2857          0.8857          0.8762          0.4190   [sketchy/clip/600 steps]\n\n\nCaveats: detached anchor and regularizer-only usage are deliberate simplifications (paper.md A3); smoke-scale numbers are plumbing checks, not results (A5).",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "01 · Fréchet-mean anchor loss"
+    ]
+  },
+  {
+    "objectID": "03_vmf_loss.html",
+    "href": "03_vmf_loss.html",
+    "title": "03 — von Mises–Fisher Loss with Learnable Per-Modality κ (primary framing)",
+    "section": "",
+    "text": "Each concept is modeled as a vMF distribution with shared mean direction μ_c and a learnable per-modality concentration κ_m (paper.md §2.3). Predictions this framing makes:\nTraining uses a grouped batch sampler (several triples of the same instance per batch) so μ_c is estimable in-batch — exactly the structure Sketchy’s ≥5 sketches/photo provides (paper.md §3.3). Also in this notebook: per-instance κ̂_sketch (Banerjee estimator, real sketches only) and the synthetic-vs-real cap diagnostic (paper.md §3.4/§3.6).\nCLI: python run.py 03 → results in runs/03_vmf_loss/&lt;timestamp&gt;/.\n%matplotlib inline\n# ============================ CONFIG ============================\n# Edit here, or override headlessly:   python run.py 03 --set steps=200 dataset=mock\n# All keys + defaults live in lib/config.py; TRIMODAL_* env vars override them.\nimport sys, pathlib\n_p = pathlib.Path.cwd()\nif not (_p / \"lib\").exists() and (_p / \"trimodal-loss\" / \"lib\").exists():\n    _p = _p / \"trimodal-loss\"          # allow launching jupyter from the repo root\nsys.path.insert(0, str(_p))\n\nfrom lib.config import get_config\nfrom lib.run_utils import new_run_dir\n\nNOTEBOOK = \"03_vmf_loss\"\nCONFIG = get_config()                  # e.g. get_config(dataset=\"mock\", backbone=\"toy\")\nRUN_DIR = new_run_dir(NOTEBOOK)        # every run gets its own results folder\nprint(\"run dir:\", RUN_DIR)\nfor k, v in sorted(CONFIG.items()):\n    print(f\"  {k:26s} {v}\")\n\nrun dir: C:\\Users\\soura\\Code\\2026\\trimodal-loss\\runs\\03_vmf_loss\\20260709-191559\n  backbone                   clip\n  batch_size                 24\n  clip_model                 ViT-B-32\n  clip_pretrained            openai\n  data_root                  C:\\Users\\soura\\Code\\2026\\trimodal-loss\\data\n  dataset                    sketchy\n  device                     auto\n  eval_max_queries           400\n  image_size                 224\n  kappa_init                 100.0\n  kappa_lr                   1.0\n  karcher_exact              True\n  karcher_iters              8\n  lambda_frechet             1.0\n  lambda_triangle            1.0\n  lambda_vmf                 0.05\n  lora_alpha                 16.0\n  lora_rank                  8\n  lr                         0.001\n  max_instances_per_class    12\n  num_classes                8\n  recall_ks                  (1, 5, 10)\n  seed                       42\n  sketches_per_photo         3\n  steps                      60\n  temperature                0.07\n  triplet_margin0            0.2\n  vmf_instances_per_batch    8\n  vmf_triples_per_instance   3\n  w_st                       0.5\n  w_sv                       1.0\n  w_triplet                  0.5\n  w_vt                       0.25\n# Data (download-or-mock) + frozen backbone + LoRA sketch path — shared by all notebooks\nfrom lib.train import setup_experiment\n\nexp = setup_experiment(CONFIG)\nmodel, ds_train, ds_test = exp[\"model\"], exp[\"ds_train\"], exp[\"ds_test\"]\nprint(\"embed dim:\", model.embed_dim,\n      \"| trainable params:\", f\"{sum(p.numel() for p in model.trainable_parameters()):,}\")\n\n[setup] device=cuda\n[data] using Sketchy HF mirror (justpers/sketchy) at C:\\Users\\soura\\Code\\2026\\trimodal-loss\\data\\sketchy_hf — real human sketches, GENERATED captions (pseudo-text)\n\n\nC:\\ProgramData\\miniconda3\\Lib\\site-packages\\tqdm\\auto.py:21: TqdmWarning: IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html\n  from .autonotebook import tqdm as notebook_tqdm\nC:\\Users\\soura\\AppData\\Roaming\\Python\\Python313\\site-packages\\open_clip\\factory.py:450: UserWarning: QuickGELU mismatch between final model config (quick_gelu=False) and pretrained tag 'openai' (quick_gelu=True).\n  warnings.warn(\n\n\n[model] CLIP ViT-B-32 frozen; LoRA r=8 injected into 24 MLP linears\n[setup] dataset=sketchy-hf  triples=288 (real=288, synthetic=0)  train=183 test=105\nembed dim: 512 | trainable params: 737,280",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "03 · von Mises–Fisher loss (κ per modality)"
+    ]
+  },
+  {
+    "objectID": "03_vmf_loss.html#sanity-differentiable-log-bessel-vs.-scipy",
+    "href": "03_vmf_loss.html#sanity-differentiable-log-bessel-vs.-scipy",
+    "title": "03 — von Mises–Fisher Loss with Learnable Per-Modality κ (primary framing)",
+    "section": "Sanity: differentiable log-Bessel vs. scipy",
+    "text": "Sanity: differentiable log-Bessel vs. scipy\nlog C_d(κ) needs log I_ν(κ) with ν = d/2 − 1 (255 for d=512). We use the uniform asymptotic expansion (A&S 9.7.7) — differentiable in κ; validate against scipy.special.ive at fp64.\n\nimport torch\nfrom scipy import special\nfrom lib import sphere\n\nnu = model.embed_dim / 2 - 1\nkap = torch.tensor([1.0, 10.0, 50.0, 200.0, 1000.0], dtype=torch.float64)\nours = sphere.log_bessel_iv(nu, kap)\nref = torch.log(torch.as_tensor(special.ive(nu, kap.numpy()))) + kap   # ive = iv * exp(-k)\nfor k, o, r in zip(kap, ours, ref):\n    err = f\"rel.err={abs(o - r) / abs(r):.2e}\" if torch.isfinite(r) else \"scipy ive underflows to 0 here\"\n    print(f\"kappa={k:7.1f}   ours={o:14.4f}   scipy={r:14.4f}   {err}\")\n\nkappa=    1.0   ours=    -1338.4633   scipy=          -inf   scipy ive underflows to 0 here\nkappa=   10.0   ours=     -751.2075   scipy=          -inf   scipy ive underflows to 0 here\nkappa=   50.0   ours=     -338.4685   scipy=     -338.4688   rel.err=8.60e-07\nkappa=  200.0   ours=       49.1717   scipy=       49.1717   rel.err=2.60e-07\nkappa= 1000.0   ours=      963.2718   scipy=      963.2719   rel.err=1.13e-07",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "03 · von Mises–Fisher loss (κ per modality)"
+    ]
+  },
+  {
+    "objectID": "03_vmf_loss.html#train-with-the-vmf-nll-term-grouped-batches-learnable-κ",
+    "href": "03_vmf_loss.html#train-with-the-vmf-nll-term-grouped-batches-learnable-κ",
+    "title": "03 — von Mises–Fisher Loss with Learnable Per-Modality κ (primary framing)",
+    "section": "Train with the vMF NLL term (grouped batches, learnable κ)",
+    "text": "Train with the vMF NLL term (grouped batches, learnable κ)\n\nfrom lib.losses import build_loss\nfrom lib.train import train\n\nloss_module = build_loss(\"vmf\", CONFIG, model.embed_dim)\nhistory = train(exp, loss_module, grouped=True)\n\nprint(\"final kappas:\", {m: round(k.item(), 2)\n                        for m, k in zip(loss_module.MODALITIES, loss_module.kappas())})\n\n[train] 737,283 trainable params, 60 steps\n  step    0  loss -42.5627  kappa_sketch=100.0 kappa_photo=100.0 kappa_text=100.0  (1s)\n  step    6  loss -44.4079  kappa_sketch=106.0 kappa_photo=106.0 kappa_text=106.0  (2s)\n  step   12  loss -45.4766  kappa_sketch=112.0 kappa_photo=112.0 kappa_text=112.0  (2s)\n  step   18  loss -45.4684  kappa_sketch=118.0 kappa_photo=117.9 kappa_text=118.1  (2s)\n  step   24  loss -46.1158  kappa_sketch=124.1 kappa_photo=123.8 kappa_text=124.1  (3s)\n  step   30  loss -46.5341  kappa_sketch=130.2 kappa_photo=129.7 kappa_text=130.1  (3s)\n  step   36  loss -47.0611  kappa_sketch=136.3 kappa_photo=135.5 kappa_text=136.1  (4s)\n  step   42  loss -46.4898  kappa_sketch=142.3 kappa_photo=141.3 kappa_text=142.0  (4s)\n  step   48  loss -47.3143  kappa_sketch=148.3 kappa_photo=147.0 kappa_text=147.9  (4s)\n  step   54  loss -47.7649  kappa_sketch=154.3 kappa_photo=152.7 kappa_text=153.8  (5s)\n  step   59  loss -47.8151  kappa_sketch=159.3 kappa_photo=157.4 kappa_text=158.7  (5s)\nfinal kappas: {'sketch': 160.3, 'photo': 158.3, 'text': 159.63}\n\n\n\n# kappa trajectory — the vMF prediction is kappa_sketch &lt; kappa_photo\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots(figsize=(7, 4))\nfor m in (\"sketch\", \"photo\", \"text\"):\n    ax.plot([h[\"step\"] for h in history], [h[f\"kappa_{m}\"] for h in history], label=f\"κ_{m}\")\nax.set(xlabel=\"step\", ylabel=\"κ\", title=\"learned per-modality concentration\")\nax.legend(); fig.tight_layout()\nfig.savefig(RUN_DIR / \"kappa_trajectory.png\", dpi=120); plt.show()",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "03 · von Mises–Fisher loss (κ per modality)"
+    ]
+  },
+  {
+    "objectID": "03_vmf_loss.html#retrieval-same-protocol-as-notebooks-0002",
+    "href": "03_vmf_loss.html#retrieval-same-protocol-as-notebooks-0002",
+    "title": "03 — von Mises–Fisher Loss with Learnable Per-Modality κ (primary framing)",
+    "section": "Retrieval (same protocol as notebooks 00–02)",
+    "text": "Retrieval (same protocol as notebooks 00–02)\n\nfrom lib.train import evaluate_retrieval\n\nmetrics, emb = evaluate_retrieval(exp)",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "03 · von Mises–Fisher loss (κ per modality)"
+    ]
+  },
+  {
+    "objectID": "03_vmf_loss.html#qualitative-results-10-best-10-worst-triads",
+    "href": "03_vmf_loss.html#qualitative-results-10-best-10-worst-triads",
+    "title": "03 — von Mises–Fisher Loss with Learnable Per-Modality κ (primary framing)",
+    "section": "Qualitative results — 10 best & 10 worst triads",
+    "text": "Qualitative results — 10 best & 10 worst triads\nEvery held-out sketch query is ranked by where its correct photo lands in the sketch→photo gallery ranking. Below we render the 10 worst queries (hardest first — the ones to interrogate) and the 10 best (top-1 hits), each as a triad [query sketch | ground-truth photo | top-1 retrieved photo]. A green top-1 title is a hit, red is a miss; the worst-performing classes are printed underneath so systematic failure modes (a class or a source the model can’t match) are visible.\n\nfrom lib.train import show_good_bad_triads\n\nranked_rows = show_good_bad_triads(exp, emb, RUN_DIR, k_show=10)\n# hardest 10, as a table\nprint(\"\\nHardest 10 queries (worst first):\")\nprint(f\"{'class':16s}{'source':10s}{'rank':&gt;5s}{'gt_sim':&gt;9s}{'top1_sim':&gt;9s}\")\n_cn = {t.class_id: t.class_name for t in ds_test.triples}\nfor r in ranked_rows[:10]:\n    print(f\"{_cn.get(r['class_id'],'?'):16s}{r['source']:10s}{r['rank']:5d}\"\n          f\"{r['gt_sim']:9.3f}{r['top1_sim']:9.3f}\")\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWorst-performing classes (by miss count, rank&gt;0): [('jellyfish', 19), ('duck', 12), ('snail', 10), ('pizza', 10), ('flower', 7), ('bread', 6), ('mushroom', 4), ('crab', 4)]\nMean rank 1.97  |  top-1 hit rate 0.314\n\nHardest 10 queries (worst first):\nclass           source     rank   gt_sim top1_sim\njellyfish       real         15    0.403    0.552\nflower          real         13    0.461    0.635\nflower          real         13    0.474    0.574\nflower          real          7    0.530    0.628\nflower          real          7    0.521    0.571\njellyfish       real          6    0.633    0.758\njellyfish       real          6    0.636    0.759\njellyfish       real          6    0.594    0.714\nduck            real          5    0.611    0.686\nbread           real          4    0.510    0.693",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "03 · von Mises–Fisher loss (κ per modality)"
+    ]
+  },
+  {
+    "objectID": "03_vmf_loss.html#diagnostics-per-instance-κ-and-the-synthetic-vs-real-cap",
+    "href": "03_vmf_loss.html#diagnostics-per-instance-κ-and-the-synthetic-vs-real-cap",
+    "title": "03 — von Mises–Fisher Loss with Learnable Per-Modality κ (primary framing)",
+    "section": "Diagnostics: per-instance κ̂ and the synthetic-vs-real cap",
+    "text": "Diagnostics: per-instance κ̂ and the synthetic-vs-real cap\nRules from paper.md §3.4: κ_sketch is estimated from real sketches only; every sample carries a source flag. The cap diagnostic reports κ̂ per source and the angle between the synthetic and real sketch cap means — if synthetic κ̂ ≫ real κ̂ or the angle is large, synthetic sketches are geometrically off-manifold (tighter, differently-centered cap) and must stay augmentation-only. On the mock dataset the “real” sketches are the jittered style and “synthetic” the clean style, so the mechanism is demonstrable end-to-end.\n\nimport matplotlib.pyplot as plt\nfrom lib.train import cap_diagnostic, per_instance_kappa_sketch\nfrom lib.run_utils import save_json\n\nkappas = per_instance_kappa_sketch(emb, min_sketches=2, real_only=True)\nif kappas:\n    fig, ax = plt.subplots(figsize=(6, 3.5))\n    ax.hist(kappas, bins=20)\n    ax.set(xlabel=\"per-instance κ̂ (real sketches only)\", ylabel=\"count\",\n           title=\"per-instance sketch concentration (Sketchy's ≥5 sketches/photo)\")\n    fig.tight_layout(); fig.savefig(RUN_DIR / \"kappa_per_instance.png\", dpi=120); plt.show()\nelse:\n    print(\"Not enough real multi-sketch instances in the eval subset for per-instance κ̂.\")\n\ndiag = cap_diagnostic(emb)\nprint(\"cap diagnostic:\", diag)\nif diag.get(\"synthetic\") and diag.get(\"real\"):\n    infl = diag[\"synthetic\"][\"kappa_hat\"] / diag[\"real\"][\"kappa_hat\"]\n    print(f\"\\nκ inflation (synthetic/real): {infl:.2f}x    cap-mean angle: {diag['cap_angle_deg']:.2f}°\")\n    print(\"If inflation &gt;&gt; 1 or the angle is large: synthetic sketches form a tighter,\")\n    print(\"differently-centered cap -&gt; augmentation only, never for κ estimation (paper.md §3.4).\")\nsave_json(diag, RUN_DIR / \"cap_diagnostic.json\")\n\n\n\n\n\n\n\n\ncap diagnostic: {'real': {'kappa_hat': 467.62481689453125, 'n': 105}, 'synthetic': None}\n\n\n\nfrom lib.train import finish_run\n\nrecord = finish_run(\n    RUN_DIR, NOTEBOOK, CONFIG, history, metrics,\n    extra=dict(kappa_final={m: k.item() for m, k in\n                            zip(loss_module.MODALITIES, loss_module.kappas())},\n               cap_diagnostic=diag))\n\n[done] results in C:\\Users\\soura\\Code\\2026\\trimodal-loss\\runs\\03_vmf_loss\\20260709-191559\n  sketch2photo_R@10_category             0.9905\n  sketch2photo_R@10_instance             0.9714\n  sketch2photo_R@1_category              0.8762\n  sketch2photo_R@1_instance              0.3143\n  sketch2photo_R@5_category              0.9714\n  sketch2photo_R@5_instance              0.9143\n  sketchtext2photo_R@10_category         1.0000\n  sketchtext2photo_R@10_instance         1.0000\n  sketchtext2photo_R@1_category          0.9143\n  sketchtext2photo_R@1_instance          0.4381\n  sketchtext2photo_R@5_category          1.0000\n  sketchtext2photo_R@5_instance          0.9714\n\n\n\n# Cross-notebook comparison — latest run of each notebook (valid only when\n# dataset / backbone / steps / seed match across rows)\nfrom lib.run_utils import latest_metrics_per_notebook\n\ncols = [\"sketch2photo_R@1_instance\", \"sketch2photo_R@5_instance\",\n        \"sketch2photo_R@1_category\", \"sketchtext2photo_R@1_instance\"]\nshort = [\"s2p R@1 inst\", \"s2p R@5 inst\", \"s2p R@1 cat\", \"s+t2p R@1 inst\"]\nlatest = latest_metrics_per_notebook()\nprint(f\"{'notebook':32s}\" + \"\".join(f\"{c:&gt;16s}\" for c in short))\nfor nb, rec in sorted(latest.items()):\n    m = rec.get(\"metrics\", {})\n    print(f\"{nb:32s}\" + \"\".join(f\"{m.get(c, float('nan')):16.4f}\" for c in cols)\n          + f\"   [{rec.get('dataset','?')}/{rec.get('backbone','?')}/{rec.get('steps','?')} steps]\")\n\nnotebook                            s2p R@1 inst    s2p R@5 inst     s2p R@1 cat  s+t2p R@1 inst\n00_data_and_adaptation                    0.3429          0.9143          0.8857          0.5048   [sketchy/clip/60 steps]\n01_frechet_mean_loss                      0.2952          0.8571          0.8381          0.3905   [sketchy/clip/60 steps]\n02_spherical_triangle_loss                0.3429          0.9143          0.8571          0.4476   [sketchy/clip/60 steps]\n03_vmf_loss                               0.3143          0.9143          0.8762          0.4381   [sketchy/clip/60 steps]\n\n\nCaveats: hybrid vMF+InfoNCE with detached μ (paper.md A3); Bessel approximation regime (A4); per-instance κ̂ needs multiple real sketches per instance — on FS-COCO (1 sketch/scene) κ is only estimable at class/global level (§3.3). Smoke-scale numbers are plumbing checks (A5).",
+    "crumbs": [
+      "Home",
+      "Notebooks",
+      "03 · von Mises–Fisher loss (κ per modality)"
+    ]
+  },
+  {
+    "objectID": "docs/exp2_WEIGH_plan_and_observation.html",
+    "href": "docs/exp2_WEIGH_plan_and_observation.html",
+    "title": "",
+    "section": "",
+    "text": "Code",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP2 · WEIGH"
+    ]
+  },
+  {
+    "objectID": "docs/exp2_WEIGH_plan_and_observation.html#motivation",
+    "href": "docs/exp2_WEIGH_plan_and_observation.html#motivation",
+    "title": "",
+    "section": "Motivation",
+    "text": "Motivation\nEach geometric loss is L = L_pairwise-InfoNCE + λ · L_geo. The committed runs use a single hand-picked λ per loss (lambda_frechet=1, lambda_triangle=1, lambda_vmf=0.05). That is a confound: vMF’s apparent R@1 drop may simply be λ too large — with κ≈600 the vMF gradient can be ~30× the InfoNCE gradient scale, drowning the contrastive term. A loss that only helps at one λ, or only hurts at one λ, has not been fairly evaluated.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP2 · WEIGH"
+    ]
+  },
+  {
+    "objectID": "docs/exp2_WEIGH_plan_and_observation.html#hypothesis",
+    "href": "docs/exp2_WEIGH_plan_and_observation.html#hypothesis",
+    "title": "",
+    "section": "Hypothesis",
+    "text": "Hypothesis\nEach geometric term has a non-trivial λ* &gt; 0 where it beats λ=0 (pure baseline) on R@1-instance. If the best any loss can do is λ→0 (i.e. “add nothing”), that is itself the finding — the explicit geometry is inert once InfoNCE is tuned.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP2 · WEIGH"
+    ]
+  },
+  {
+    "objectID": "docs/exp2_WEIGH_plan_and_observation.html#method",
+    "href": "docs/exp2_WEIGH_plan_and_observation.html#method",
+    "title": "",
+    "section": "Method",
+    "text": "Method\n\nFix the best data scale from EXP1 (or num_classes=16, instances=80, steps=1500 if EXP1 not yet run).\nSweep, per loss:\n\nFréchet: lambda_frechet ∈ {0.1, 0.3, 1.0}\nTriangle: lambda_triangle ∈ {0.1, 0.3, 1.0}\nvMF: lambda_vmf ∈ {0.002, 0.01, 0.05}\n\nInclude the λ=0 baseline point once (that is just notebook 00).\nSeeds {0, 1} to keep the count at 3 losses × 3 λ × 2 seeds = 18 runs.\nPlot R@1-instance vs λ per loss, with the baseline as a horizontal band (mean ± std). A loss “wins” only if its best λ clears the baseline band.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP2 · WEIGH"
+    ]
+  },
+  {
+    "objectID": "docs/exp2_WEIGH_plan_and_observation.html#commands",
+    "href": "docs/exp2_WEIGH_plan_and_observation.html#commands",
+    "title": "",
+    "section": "Commands",
+    "text": "Commands\nfor s in 0 1; do\n  for L in 0.1 0.3 1.0; do python run.py 01 --set lambda_frechet=$L  steps=1500 seed=$s num_classes=16 max_instances_per_class=80; done\n  for L in 0.1 0.3 1.0; do python run.py 02 --set lambda_triangle=$L steps=1500 seed=$s num_classes=16 max_instances_per_class=80; done\n  for L in 0.002 0.01 0.05; do python run.py 03 --set lambda_vmf=$L   steps=1500 seed=$s num_classes=16 max_instances_per_class=80; done\ndone",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP2 · WEIGH"
+    ]
+  },
+  {
+    "objectID": "docs/exp2_WEIGH_plan_and_observation.html#timing-note-1-h-risk",
+    "href": "docs/exp2_WEIGH_plan_and_observation.html#timing-note-1-h-risk",
+    "title": "",
+    "section": "Timing note (⚠️ >1 h risk)",
+    "text": "Timing note (⚠️ &gt;1 h risk)\n18 runs × ~2.5–3 min ≈ 45–55 min. If it drifts past 1 h, cut to seed {0} (9 runs, ~25 min) and treat λ curves as single-seed exploratory, then confirm the winning λ with a 3-seed run. The embedding-cache optimization from EXP1 applies here too and would roughly halve the time.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP2 · WEIGH"
+    ]
+  },
+  {
+    "objectID": "docs/exp2_WEIGH_plan_and_observation.html#confounds-controlled",
+    "href": "docs/exp2_WEIGH_plan_and_observation.html#confounds-controlled",
+    "title": "",
+    "section": "Confounds controlled",
+    "text": "Confounds controlled\n\nSame seed/data/steps across all λ for a given loss → only λ varies.\nκ learning-rate held fixed for vMF (else λ and κ-lr interact).\nThe λ=0 point is the actual baseline notebook, not a re-implementation.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP2 · WEIGH"
+    ]
+  },
+  {
+    "objectID": "docs/exp2_WEIGH_plan_and_observation.html#observation-run-2026-07-09-16-classes-1500-steps-seed-0-sweep-seeds-12-confirm",
+    "href": "docs/exp2_WEIGH_plan_and_observation.html#observation-run-2026-07-09-16-classes-1500-steps-seed-0-sweep-seeds-12-confirm",
+    "title": "",
+    "section": "OBSERVATION — run 2026-07-09 (16 classes, 1500 steps, seed 0 sweep + seeds 1–2 confirm)",
+    "text": "OBSERVATION — run 2026-07-09 (16 classes, 1500 steps, seed 0 sweep + seeds 1–2 confirm)\nConfig: num_classes=16, max_instances_per_class=80, sketches_per_photo=5, steps=1500, batch_size=48. Triangle skipped (EXP1+EXP4 agree it’s inert). The λ-vs-λ sweep below is seed 0 (single-seed trend); the winner is then re-run at seeds 1–2 (.exp2b) for a 3-seed headline.\n\nλ sweep (seed 0)\n\n\n\nloss\nλ\nR@1 inst\nR@5 inst\nR@1 cat\n(s+t)→p R@1\n\n\n\n\nbaseline\n—\n0.205\n0.560\n0.965\n0.302\n\n\nFréchet\n0.1\n0.215\n0.560\n0.965\n0.307\n\n\nFréchet\n0.3\n0.237\n0.610\n0.975\n0.312\n\n\nFréchet\n1.0\n0.205\n0.598\n0.968\n0.282\n\n\nvMF\n0.002\n0.170\n0.490\n0.973\n0.287\n\n\nvMF\n0.01\n0.165\n0.492\n0.978\n0.315\n\n\nvMF\n0.05\n0.115\n0.393\n0.907\n0.233\n\n\n\n\n\nFindings\n\nFréchet has a clean inverted-U with λ* = 0.3 — the textbook signature of a well-behaved regularizer weight. At λ=0.3 it beats baseline on R@1 instance (+3.2 pts, 0.237 vs 0.205, +16% rel.) and R@5 instance (+5.0 pts, 0.610 vs 0.560). Too small (0.1) is too weak; too large (1.0) collapses back to / below baseline. This is the campaign’s one clear positive result.\nvMF’s damage is NOT a pure λ artifact. Shrinking λ from 0.05 → 0.002 reduces the harm (R@1 0.115 → 0.170) but never reaches baseline (0.205) at any tested λ. So the vMF NLL term, as formulated (hybrid with detached μ + learned κ), is net-negative for sketch→photo instance retrieval across the whole λ range. It does slightly help the composite text query at λ=0.01 (s+t R@1 0.315 &gt; 0.302) — consistent with it doing something to the text geometry — but it loses the headline metric everywhere. Combined with EXP3 (κ prediction unsupported), the vMF framing is not working on this data.\nCategory retrieval stays saturated (~0.97) except where vMF over-weights.\n\n\n\nVerdict & recommendation\n\nHeadline config: Fréchet-mean anchor at λ_frechet = 0.3. It is the only spherical framing that beats the pairwise-InfoNCE baseline on the headline metric. Being confirmed at 3 seeds (see below).\nvMF: drop from the retrieval comparison as-is; revisit only with a different formulation (e.g. contrastive-normalized vMF mixture, or κ from real multi-artist sketches) — not a λ-tuning fix.\nTriangle: closed out (inert).\nEXP5 gate is now MET (a loss — Fréchet — clears the baseline band), so the FS-COCO real-triplet test is justified. It remains 🔴 &gt;1 h (download + new loader) and is therefore left as the explicit next step, not auto-run.\n\n\n\n3-seed confirmation of Fréchet λ=0.3 vs baseline — tempers the headline\nSeeds {0,1,2}, same config:\n\n\n\n\n\n\n\n\n\nloss\nR@1 inst (3 seeds)\nraw R@1 per seed\nR@5 inst (3 seeds)\n\n\n\n\nbaseline\n0.207 ± 0.002\n0.205 / 0.210 / 0.205\n0.574 ± 0.010\n\n\nFréchet λ=0.3\n0.220 ± 0.015\n0.237 / 0.200 / 0.223\n0.596 ± 0.014\n\n\n\nHonest reading: the seed-0 R@1 of 0.237 that looked like a clean +3.2 pt win was an optimistic draw — seeds 1,2 give 0.200 and 0.223. Over 3 seeds:\n\nR@1 instance: +1.3 pts (0.220 vs 0.207), but within ~1 Fréchet-σ (σ=0.015). Not a decisive win at 3 seeds.\nR@5 instance: +2.2 pts (0.596 vs 0.574), ~1.5× pooled σ — the more consistent signal, positive in the aggregate.\n\nSo the tempered conclusion: Fréchet λ=0.3 is the best of the three framings and shows a small, mostly-R@5 edge over baseline, but the R@1 margin is seed-sensitive and not yet significant. It is a promising signal worth the real-data test, not a settled win. Firm it up with (a) more seeds, (b) a larger gallery (raise eval_max_queries), (c) FS-COCO (EXP5). The single-seed λ curve (inverted-U with peak at 0.3) is still the right λ; the magnitude of the gain was overstated by one lucky seed.\n\n\nCaveats\n\nSweep is single-seed; the confirmation run addresses only the winner. Other λ points are point estimates.\nPseudo-text (A1); gallery 80; steps=1500. Absolute numbers are not publication-grade — the relative λ response is the result.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP2 · WEIGH"
+    ]
+  },
+  {
+    "objectID": "docs/exp4_SHAPE_plan_and_observation.html",
+    "href": "docs/exp4_SHAPE_plan_and_observation.html",
+    "title": "",
+    "section": "",
+    "text": "Code",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP4 · SHAPE"
+    ]
+  },
+  {
+    "objectID": "docs/exp4_SHAPE_plan_and_observation.html#motivation",
+    "href": "docs/exp4_SHAPE_plan_and_observation.html#motivation",
+    "title": "",
+    "section": "Motivation",
+    "text": "Motivation\nThe triangle loss minimizes the geodesic-triangle area E (Girard excess) of each (s, v, t) triple, on the theory that a small E (near-collinear on a great circle) is a “better” configuration. But E = 0 only means coplanar-with-origin, not that the three points are close — the paper flags this. Before spending sweep budget (EXP2) on the triangle loss, run the cheap decisive check: does E actually predict retrieval success per triple? If triples the model retrieves correctly have systematically smaller E than triples it misses, the term is tracking something real. If E is uncorrelated with success, the regularizer is pushing on a quantity that doesn’t matter and we should say so and de-prioritize it.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP4 · SHAPE"
+    ]
+  },
+  {
+    "objectID": "docs/exp4_SHAPE_plan_and_observation.html#hypothesis",
+    "href": "docs/exp4_SHAPE_plan_and_observation.html#hypothesis",
+    "title": "",
+    "section": "Hypothesis",
+    "text": "Hypothesis\nAmong held-out triples, E is negatively associated with retrieval success: correctly-retrieved (rank-0) triples have smaller mean E than missed triples, and per-triple E correlates positively with retrieval rank (bigger triangle → worse rank).",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP4 · SHAPE"
+    ]
+  },
+  {
+    "objectID": "docs/exp4_SHAPE_plan_and_observation.html#method",
+    "href": "docs/exp4_SHAPE_plan_and_observation.html#method",
+    "title": "",
+    "section": "Method",
+    "text": "Method\nOn a trained baseline model (so the diagnostic is not circular — we do not use a triangle-trained model, which would trivially have small E): 1. Embed the test triples; for each compute E(s, v, t) and its sketch→photo rank of the correct photo. 2. Report: mean E for rank-0 (hits) vs rank&gt;0 (misses); Spearman correlation between E and rank; and E for the 10 best vs 10 worst triads from the notebook’s qualitative section. 3. Control: repeat with the pairwise angles (s·v, s·t, v·t) to check whether E adds anything beyond what the pairwise similarities already say (partial correlation of E with rank, controlling for s·v).\nA tiny standalone script docs/exp4_shape_probe.py implements this using the shared lib utilities (spherical_triangle_excess, rank_test_queries).",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP4 · SHAPE"
+    ]
+  },
+  {
+    "objectID": "docs/exp4_SHAPE_plan_and_observation.html#why-this-is-decisive-and-cheap",
+    "href": "docs/exp4_SHAPE_plan_and_observation.html#why-this-is-decisive-and-cheap",
+    "title": "",
+    "section": "Why this is decisive and cheap",
+    "text": "Why this is decisive and cheap\nNo training sweep: one baseline model, one pass over the test set, a correlation. It can kill the triangle framing early (if E ⟂ rank) or justify sweeping it in EXP2 (if E predicts rank), for ~10 min of compute.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP4 · SHAPE"
+    ]
+  },
+  {
+    "objectID": "docs/exp4_SHAPE_plan_and_observation.html#observation-run-2026-07-09-baseline-model-1200-steps-16-classes-400-test-queries",
+    "href": "docs/exp4_SHAPE_plan_and_observation.html#observation-run-2026-07-09-baseline-model-1200-steps-16-classes-400-test-queries",
+    "title": "",
+    "section": "OBSERVATION — run 2026-07-09 (baseline model, 1200 steps, 16 classes, 400 test queries)",
+    "text": "OBSERVATION — run 2026-07-09 (baseline model, 1200 steps, 16 classes, 400 test queries)\nConfig: steps=1200, num_classes=16, max_instances_per_class=80, sketches_per_photo=5, batch_size=48, HF Sketchy mirror. Baseline loss only (non-circular). Raw numbers in docs/exp4_shape_result.json. Train time ~2.8 min (0.14 s/step at batch 48 — see the EXP1 timing implication below).\nResult:\n\n\n\nquantity\nvalue\n\n\n\n\ntop-1 hit rate\n0.228\n\n\nmean excess E, hits (rank 0)\n0.779\n\n\nmean excess E, misses (rank&gt;0)\n0.838\n\n\nSpearman(E, rank), raw\n+0.555 (p ≈ 1e-34)\n\n\npartial Spearman(E, rank) given s·v\n−0.22\n\n\n\nInterpretation — the headline (raw) correlation is a confound. Marginally, bigger triangles go with worse ranks (ρ=+0.55, hits have visibly smaller E than misses), which at face value blesses the triangle term. But once we control for the sketch–photo similarity s·v, the partial correlation flips to −0.22: E is large precisely when s·v is small (a bad retrieval), and the pairwise term already optimizes s·v. After removing that shared dependence, higher E is if anything mildly associated with better rank. So E carries almost no independent signal for retrieval beyond what the pairwise sketch–photo term captures — and its residual sign is the opposite of what the regularizer assumes.\n(The script’s built-in verdict string — “E PREDICTS rank” — is triggered by the crude |partial_rho|&gt;0.05 threshold and mis-reads the sign; the partial correlation is negative. Corrected verdict below.)\nVerdict: ⚠️ De-prioritize the triangle term. It is not free of value — E does track configuration quality marginally — but it is largely redundant with the pairwise sketch–photo similarity, and its independent contribution points the wrong way. In EXP2, sweep it last and with low expectations; do not spend multi-seed budget on it before Fréchet and vMF. This is exactly the early-kill the cheap diagnostic was designed to deliver.\nCaveats: pseudo-text captions (A1); single baseline seed; s·v is only one of three pairwise angles — a fuller control would residualize on all of (s·v, s·t, v·t). The partial-correlation sign is robust enough to act on, but the magnitude should be reconfirmed at EXP1 scale with multiple seeds.",
+    "crumbs": [
+      "Home",
+      "Experiment campaign",
+      "EXP4 · SHAPE"
+    ]
+  }
+]

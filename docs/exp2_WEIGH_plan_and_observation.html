@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>exp2_weigh_plan_and_observation – Trimodal Spherical Loss</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../docs/exp3_KAPPA_plan_and_observation.html" rel="next">
+<link href="../docs/exp1_SCALE_plan_and_observation.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-fd6c97ee6dae9fb3bde4de74a669a8cf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Trimodal Spherical Loss</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="../index.html" aria-current="page"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../paper.html"> 
+<span class="menu-text">Paper</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../docs/exp1_SCALE_plan_and_observation.html">Experiment campaign</a></li><li class="breadcrumb-item"><a href="../docs/exp2_WEIGH_plan_and_observation.html">EXP2 · WEIGH</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Home</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../paper.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Working paper</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false">
+ <span class="menu-text">Notebooks</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../00_data_and_adaptation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">00 · Data &amp; adaptation (baseline)</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../01_frechet_mean_loss.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">01 · Fréchet-mean anchor loss</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02_spherical_triangle_loss.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">02 · Spherical-triangle regularizer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../03_vmf_loss.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">03 · von Mises–Fisher loss (κ per modality)</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Experiment campaign</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../docs/exp1_SCALE_plan_and_observation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">EXP1 · SCALE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../docs/exp2_WEIGH_plan_and_observation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">EXP2 · WEIGH</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../docs/exp3_KAPPA_plan_and_observation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">EXP3 · KAPPA</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../docs/exp4_SHAPE_plan_and_observation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">EXP4 · SHAPE</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../docs/exp5_SCENE_plan_and_observation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">EXP5 · SCENE</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#exp2-weigh-sweep-the-geometric-term-weight-before-trusting-any-ranking" id="toc-exp2-weigh-sweep-the-geometric-term-weight-before-trusting-any-ranking" class="nav-link active" data-scroll-target="#exp2-weigh-sweep-the-geometric-term-weight-before-trusting-any-ranking">EXP2 · WEIGH — sweep the geometric-term weight before trusting any ranking</a>
+  <ul class="collapse">
+  <li><a href="#motivation" id="toc-motivation" class="nav-link" data-scroll-target="#motivation">Motivation</a></li>
+  <li><a href="#hypothesis" id="toc-hypothesis" class="nav-link" data-scroll-target="#hypothesis">Hypothesis</a></li>
+  <li><a href="#method" id="toc-method" class="nav-link" data-scroll-target="#method">Method</a></li>
+  <li><a href="#commands" id="toc-commands" class="nav-link" data-scroll-target="#commands">Commands</a></li>
+  <li><a href="#timing-note-1-h-risk" id="toc-timing-note-1-h-risk" class="nav-link" data-scroll-target="#timing-note-1-h-risk">Timing note (⚠️ &gt;1 h risk)</a></li>
+  <li><a href="#confounds-controlled" id="toc-confounds-controlled" class="nav-link" data-scroll-target="#confounds-controlled">Confounds controlled</a></li>
+  <li><a href="#observation-run-2026-07-09-16-classes-1500-steps-seed-0-sweep-seeds-12-confirm" id="toc-observation-run-2026-07-09-16-classes-1500-steps-seed-0-sweep-seeds-12-confirm" class="nav-link" data-scroll-target="#observation-run-2026-07-09-16-classes-1500-steps-seed-0-sweep-seeds-12-confirm">OBSERVATION — run 2026-07-09 (16 classes, 1500 steps, seed 0 sweep + seeds 1–2 confirm)</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../docs/exp1_SCALE_plan_and_observation.html">Experiment campaign</a></li><li class="breadcrumb-item"><a href="../docs/exp2_WEIGH_plan_and_observation.html">EXP2 · WEIGH</a></li></ol></nav><h1 class="title display-7"></h1></header><div class="quarto-title-block"><div class="quarto-title-tools-only"><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+
+
+
+
+<section id="exp2-weigh-sweep-the-geometric-term-weight-before-trusting-any-ranking" class="level1">
+<h1>EXP2 · WEIGH — sweep the geometric-term weight before trusting any ranking</h1>
+<p><strong>Mnemonic:</strong> WEIGH = weight the geometric term (λ) correctly; a loss judged at one λ is not judged at all. <strong>Status:</strong> PLAN written 2026-07-09 · OBSERVATION pending. <strong>Est. runtime:</strong> ⚠️ <strong>borderline ~50–60 min</strong> (up to 18 runs). See timing note.</p>
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>Each geometric loss is <code>L = L_pairwise-InfoNCE + λ · L_geo</code>. The committed runs use a single hand-picked λ per loss (<code>lambda_frechet=1</code>, <code>lambda_triangle=1</code>, <code>lambda_vmf=0.05</code>). That is a confound: vMF’s apparent R@1 drop may simply be λ too large — with κ≈600 the vMF gradient can be ~30× the InfoNCE gradient scale, drowning the contrastive term. A loss that only helps at one λ, or only hurts at one λ, has not been fairly evaluated.</p>
+</section>
+<section id="hypothesis" class="level2">
+<h2 class="anchored" data-anchor-id="hypothesis">Hypothesis</h2>
+<p>Each geometric term has a non-trivial λ* &gt; 0 where it beats λ=0 (pure baseline) on R@1-instance. If the best any loss can do is λ→0 (i.e.&nbsp;“add nothing”), that is itself the finding — the explicit geometry is inert once InfoNCE is tuned.</p>
+</section>
+<section id="method" class="level2">
+<h2 class="anchored" data-anchor-id="method">Method</h2>
+<ul>
+<li>Fix the best data scale from EXP1 (or <code>num_classes=16, instances=80, steps=1500</code> if EXP1 not yet run).</li>
+<li>Sweep, per loss:
+<ul>
+<li>Fréchet: <code>lambda_frechet ∈ {0.1, 0.3, 1.0}</code></li>
+<li>Triangle: <code>lambda_triangle ∈ {0.1, 0.3, 1.0}</code></li>
+<li>vMF: <code>lambda_vmf ∈ {0.002, 0.01, 0.05}</code></li>
+</ul></li>
+<li>Include the <strong>λ=0 baseline point</strong> once (that is just notebook 00).</li>
+<li>Seeds <code>{0, 1}</code> to keep the count at 3 losses × 3 λ × 2 seeds = <strong>18 runs</strong>.</li>
+<li>Plot R@1-instance vs λ per loss, with the baseline as a horizontal band (mean ± std). A loss “wins” only if its best λ clears the baseline band.</li>
+</ul>
+</section>
+<section id="commands" class="level2">
+<h2 class="anchored" data-anchor-id="commands">Commands</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> s <span class="kw">in</span> 0 1<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> L <span class="kw">in</span> 0.1 0.3 1.0<span class="kw">;</span> <span class="cf">do</span> <span class="ex">python</span> run.py 01 <span class="at">--set</span> lambda_frechet=<span class="va">$L</span>  steps=1500 seed=<span class="va">$s</span> num_classes=16 max_instances_per_class=80<span class="kw">;</span> <span class="cf">done</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> L <span class="kw">in</span> 0.1 0.3 1.0<span class="kw">;</span> <span class="cf">do</span> <span class="ex">python</span> run.py 02 <span class="at">--set</span> lambda_triangle=<span class="va">$L</span> steps=1500 seed=<span class="va">$s</span> num_classes=16 max_instances_per_class=80<span class="kw">;</span> <span class="cf">done</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> L <span class="kw">in</span> 0.002 0.01 0.05<span class="kw">;</span> <span class="cf">do</span> <span class="ex">python</span> run.py 03 <span class="at">--set</span> lambda_vmf=<span class="va">$L</span>   steps=1500 seed=<span class="va">$s</span> num_classes=16 max_instances_per_class=80<span class="kw">;</span> <span class="cf">done</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="timing-note-1-h-risk" class="level2">
+<h2 class="anchored" data-anchor-id="timing-note-1-h-risk">Timing note (⚠️ &gt;1 h risk)</h2>
+<p>18 runs × ~2.5–3 min ≈ 45–55 min. If it drifts past 1 h, cut to seed <code>{0}</code> (9 runs, ~25 min) and treat λ curves as single-seed exploratory, then confirm the winning λ with a 3-seed run. The embedding-cache optimization from EXP1 applies here too and would roughly halve the time.</p>
+</section>
+<section id="confounds-controlled" class="level2">
+<h2 class="anchored" data-anchor-id="confounds-controlled">Confounds controlled</h2>
+<ul>
+<li>Same seed/data/steps across all λ for a given loss → only λ varies.</li>
+<li>κ learning-rate held fixed for vMF (else λ and κ-lr interact).</li>
+<li>The λ=0 point is the <em>actual</em> baseline notebook, not a re-implementation.</li>
+</ul>
+</section>
+<section id="observation-run-2026-07-09-16-classes-1500-steps-seed-0-sweep-seeds-12-confirm" class="level2">
+<h2 class="anchored" data-anchor-id="observation-run-2026-07-09-16-classes-1500-steps-seed-0-sweep-seeds-12-confirm">OBSERVATION — run 2026-07-09 (16 classes, 1500 steps, seed 0 sweep + seeds 1–2 confirm)</h2>
+<p>Config: <code>num_classes=16, max_instances_per_class=80, sketches_per_photo=5, steps=1500, batch_size=48</code>. Triangle <strong>skipped</strong> (EXP1+EXP4 agree it’s inert). The λ-vs-λ sweep below is <strong>seed 0</strong> (single-seed trend); the winner is then re-run at seeds 1–2 (<code>.exp2b</code>) for a 3-seed headline.</p>
+<section id="λ-sweep-seed-0" class="level3">
+<h3 class="anchored" data-anchor-id="λ-sweep-seed-0">λ sweep (seed 0)</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>loss</th>
+<th>λ</th>
+<th>R@1 inst</th>
+<th>R@5 inst</th>
+<th>R@1 cat</th>
+<th>(s+t)→p R@1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>baseline</td>
+<td>—</td>
+<td>0.205</td>
+<td>0.560</td>
+<td>0.965</td>
+<td>0.302</td>
+</tr>
+<tr class="even">
+<td>Fréchet</td>
+<td>0.1</td>
+<td>0.215</td>
+<td>0.560</td>
+<td>0.965</td>
+<td>0.307</td>
+</tr>
+<tr class="odd">
+<td><strong>Fréchet</strong></td>
+<td><strong>0.3</strong></td>
+<td><strong>0.237</strong></td>
+<td><strong>0.610</strong></td>
+<td>0.975</td>
+<td>0.312</td>
+</tr>
+<tr class="even">
+<td>Fréchet</td>
+<td>1.0</td>
+<td>0.205</td>
+<td>0.598</td>
+<td>0.968</td>
+<td>0.282</td>
+</tr>
+<tr class="odd">
+<td>vMF</td>
+<td>0.002</td>
+<td>0.170</td>
+<td>0.490</td>
+<td>0.973</td>
+<td>0.287</td>
+</tr>
+<tr class="even">
+<td>vMF</td>
+<td>0.01</td>
+<td>0.165</td>
+<td>0.492</td>
+<td>0.978</td>
+<td><strong>0.315</strong></td>
+</tr>
+<tr class="odd">
+<td>vMF</td>
+<td>0.05</td>
+<td>0.115</td>
+<td>0.393</td>
+<td>0.907</td>
+<td>0.233</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="findings" class="level3">
+<h3 class="anchored" data-anchor-id="findings">Findings</h3>
+<ol type="1">
+<li><strong>Fréchet has a clean inverted-U with λ* = 0.3</strong> — the textbook signature of a well-behaved regularizer weight. At λ=0.3 it beats baseline on <strong>R@1 instance (+3.2 pts, 0.237 vs 0.205, +16% rel.)</strong> and <strong>R@5 instance (+5.0 pts, 0.610 vs 0.560)</strong>. Too small (0.1) is too weak; too large (1.0) collapses back to / below baseline. <strong>This is the campaign’s one clear positive result.</strong></li>
+<li><strong>vMF’s damage is NOT a pure λ artifact.</strong> Shrinking λ from 0.05 → 0.002 <em>reduces</em> the harm (R@1 0.115 → 0.170) but <strong>never reaches baseline</strong> (0.205) at any tested λ. So the vMF NLL term, as formulated (hybrid with detached μ + learned κ), is net-negative for sketch→photo instance retrieval across the whole λ range. It does <em>slightly</em> help the <strong>composite text query</strong> at λ=0.01 (s+t R@1 0.315 &gt; 0.302) — consistent with it doing something to the text geometry — but it loses the headline metric everywhere. Combined with EXP3 (κ prediction unsupported), the vMF framing is <strong>not working on this data</strong>.</li>
+<li>Category retrieval stays saturated (~0.97) except where vMF over-weights.</li>
+</ol>
+</section>
+<section id="verdict-recommendation" class="level3">
+<h3 class="anchored" data-anchor-id="verdict-recommendation">Verdict &amp; recommendation</h3>
+<ul>
+<li><strong>Headline config: Fréchet-mean anchor at λ_frechet = 0.3.</strong> It is the only spherical framing that beats the pairwise-InfoNCE baseline on the headline metric. Being confirmed at 3 seeds (see below).</li>
+<li>vMF: drop from the retrieval comparison as-is; revisit only with a different formulation (e.g.&nbsp;contrastive-normalized vMF mixture, or κ from real multi-artist sketches) — not a λ-tuning fix.</li>
+<li>Triangle: closed out (inert).</li>
+<li><strong>EXP5 gate is now MET</strong> (a loss — Fréchet — clears the baseline band), so the FS-COCO real-triplet test is <em>justified</em>. It remains 🔴 <strong>&gt;1 h</strong> (download + new loader) and is therefore left as the explicit next step, not auto-run.</li>
+</ul>
+</section>
+<section id="seed-confirmation-of-fréchet-λ0.3-vs-baseline-tempers-the-headline" class="level3">
+<h3 class="anchored" data-anchor-id="seed-confirmation-of-fréchet-λ0.3-vs-baseline-tempers-the-headline">3-seed confirmation of Fréchet λ=0.3 vs baseline — <strong>tempers the headline</strong></h3>
+<p>Seeds {0,1,2}, same config:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>loss</th>
+<th>R@1 inst (3 seeds)</th>
+<th>raw R@1 per seed</th>
+<th>R@5 inst (3 seeds)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>baseline</td>
+<td>0.207 ± 0.002</td>
+<td>0.205 / 0.210 / 0.205</td>
+<td>0.574 ± 0.010</td>
+</tr>
+<tr class="even">
+<td>Fréchet λ=0.3</td>
+<td><strong>0.220 ± 0.015</strong></td>
+<td><strong>0.237</strong> / 0.200 / 0.223</td>
+<td><strong>0.596 ± 0.014</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Honest reading:</strong> the seed-0 R@1 of 0.237 that looked like a clean +3.2 pt win was <strong>an optimistic draw</strong> — seeds 1,2 give 0.200 and 0.223. Over 3 seeds:</p>
+<ul>
+<li><strong>R@1 instance: +1.3 pts (0.220 vs 0.207), but within ~1 Fréchet-σ</strong> (σ=0.015). Not a decisive win at 3 seeds.</li>
+<li><strong>R@5 instance: +2.2 pts (0.596 vs 0.574), ~1.5× pooled σ</strong> — the more consistent signal, positive in the aggregate.</li>
+</ul>
+<p>So the tempered conclusion: <strong>Fréchet λ=0.3 is the best of the three framings and shows a small, mostly-R@5 edge over baseline, but the R@1 margin is seed-sensitive and not yet significant.</strong> It is a <em>promising</em> signal worth the real-data test, not a settled win. Firm it up with (a) more seeds, (b) a larger gallery (raise <code>eval_max_queries</code>), (c) FS-COCO (EXP5). The single-seed λ curve (inverted-U with peak at 0.3) is still the right λ; the <em>magnitude</em> of the gain was overstated by one lucky seed.</p>
+</section>
+<section id="caveats" class="level3">
+<h3 class="anchored" data-anchor-id="caveats">Caveats</h3>
+<ul>
+<li>Sweep is single-seed; the confirmation run addresses only the winner. Other λ points are point estimates.</li>
+<li>Pseudo-text (A1); gallery 80; <code>steps=1500</code>. Absolute numbers are not publication-grade — the <em>relative</em> λ response is the result.</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../docs/exp1_SCALE_plan_and_observation.html" class="pagination-link" aria-label="EXP1 · SCALE">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">EXP1 · SCALE</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../docs/exp3_KAPPA_plan_and_observation.html" class="pagination-link" aria-label="EXP3 · KAPPA">
+        <span class="nav-page-text">EXP3 · KAPPA</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># EXP2 · WEIGH — sweep the geometric-term weight before trusting any ranking</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>**Mnemonic:** WEIGH = weight the geometric term (λ) correctly; a loss judged at</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>one λ is not judged at all.</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>**Status:** PLAN written 2026-07-09 · OBSERVATION pending.</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>**Est. runtime:** ⚠️ **borderline ~50–60 min** (up to 18 runs). See timing note.</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## Motivation</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>Each geometric loss is <span class="in">`L = L_pairwise-InfoNCE + λ · L_geo`</span>. The committed runs</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>use a single hand-picked λ per loss (<span class="in">`lambda_frechet=1`</span>, <span class="in">`lambda_triangle=1`</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="in">`lambda_vmf=0.05`</span>). That is a confound: vMF's apparent R@1 drop may simply be λ</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>too large — with κ≈600 the vMF gradient can be ~30× the InfoNCE gradient scale,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>drowning the contrastive term. A loss that only helps at one λ, or only hurts at</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>one λ, has not been fairly evaluated.</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hypothesis</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>Each geometric term has a non-trivial λ* &gt; 0 where it beats λ=0 (pure baseline)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>on R@1-instance. If the best any loss can do is λ→0 (i.e. "add nothing"), that is</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>itself the finding — the explicit geometry is inert once InfoNCE is tuned.</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Method</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Fix the best data scale from EXP1 (or `num_classes=16, instances=80,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  steps=1500` if EXP1 not yet run).</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sweep, per loss:</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Fréchet: <span class="in">`lambda_frechet ∈ {0.1, 0.3, 1.0}`</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>Triangle: <span class="in">`lambda_triangle ∈ {0.1, 0.3, 1.0}`</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>vMF: <span class="in">`lambda_vmf ∈ {0.002, 0.01, 0.05}`</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include the **λ=0 baseline point** once (that is just notebook 00).</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Seeds <span class="in">`{0, 1}`</span> to keep the count at 3 losses × 3 λ × 2 seeds = **18 runs**.</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Plot R@1-instance vs λ per loss, with the baseline as a horizontal band</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  (mean ± std). A loss "wins" only if its best λ clears the baseline band.</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Commands</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> s <span class="kw">in</span> 0 1<span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> L <span class="kw">in</span> 0.1 0.3 1.0<span class="kw">;</span> <span class="cf">do</span> <span class="ex">python</span> run.py 01 <span class="at">--set</span> lambda_frechet=<span class="va">$L</span>  steps=1500 seed=<span class="va">$s</span> num_classes=16 max_instances_per_class=80<span class="kw">;</span> <span class="cf">done</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> L <span class="kw">in</span> 0.1 0.3 1.0<span class="kw">;</span> <span class="cf">do</span> <span class="ex">python</span> run.py 02 <span class="at">--set</span> lambda_triangle=<span class="va">$L</span> steps=1500 seed=<span class="va">$s</span> num_classes=16 max_instances_per_class=80<span class="kw">;</span> <span class="cf">done</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> L <span class="kw">in</span> 0.002 0.01 0.05<span class="kw">;</span> <span class="cf">do</span> <span class="ex">python</span> run.py 03 <span class="at">--set</span> lambda_vmf=<span class="va">$L</span>   steps=1500 seed=<span class="va">$s</span> num_classes=16 max_instances_per_class=80<span class="kw">;</span> <span class="cf">done</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Timing note (⚠️ &gt;1 h risk)</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>18 runs × ~2.5–3 min ≈ 45–55 min. If it drifts past 1 h, cut to seed <span class="in">`{0}`</span> (9</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>runs, ~25 min) and treat λ curves as single-seed exploratory, then confirm the</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>winning λ with a 3-seed run. The embedding-cache optimization from EXP1 applies</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>here too and would roughly halve the time.</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="fu">## Confounds controlled</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Same seed/data/steps across all λ for a given loss → only λ varies.</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>κ learning-rate held fixed for vMF (else λ and κ-lr interact).</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The λ=0 point is the *actual* baseline notebook, not a re-implementation.</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a><span class="fu">## OBSERVATION — run 2026-07-09 (16 classes, 1500 steps, seed 0 sweep + seeds 1–2 confirm)</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>Config: `num_classes=16, max_instances_per_class=80, sketches_per_photo=5,</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>steps=1500, batch_size=48`. Triangle **skipped** (EXP1+EXP4 agree it's inert).</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>The λ-vs-λ sweep below is **seed 0** (single-seed trend); the winner is then</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>re-run at seeds 1–2 (<span class="in">`.exp2b`</span>) for a 3-seed headline.</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a><span class="fu">### λ sweep (seed 0)</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> loss <span class="pp">|</span> λ <span class="pp">|</span> R@1 inst <span class="pp">|</span> R@5 inst <span class="pp">|</span> R@1 cat <span class="pp">|</span> (s+t)→p R@1 <span class="pp">|</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|---|---|---|</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> baseline <span class="pp">|</span> — <span class="pp">|</span> 0.205 <span class="pp">|</span> 0.560 <span class="pp">|</span> 0.965 <span class="pp">|</span> 0.302 <span class="pp">|</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Fréchet <span class="pp">|</span> 0.1 <span class="pp">|</span> 0.215 <span class="pp">|</span> 0.560 <span class="pp">|</span> 0.965 <span class="pp">|</span> 0.307 <span class="pp">|</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Fréchet** | **0.3** | **0.237** | **0.610** <span class="pp">|</span> 0.975 <span class="pp">|</span> 0.312 <span class="pp">|</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Fréchet <span class="pp">|</span> 1.0 <span class="pp">|</span> 0.205 <span class="pp">|</span> 0.598 <span class="pp">|</span> 0.968 <span class="pp">|</span> 0.282 <span class="pp">|</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> vMF <span class="pp">|</span> 0.002 <span class="pp">|</span> 0.170 <span class="pp">|</span> 0.490 <span class="pp">|</span> 0.973 <span class="pp">|</span> 0.287 <span class="pp">|</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> vMF <span class="pp">|</span> 0.01 <span class="pp">|</span> 0.165 <span class="pp">|</span> 0.492 <span class="pp">|</span> 0.978 <span class="pp">|</span> **0.315** <span class="pp">|</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> vMF <span class="pp">|</span> 0.05 <span class="pp">|</span> 0.115 <span class="pp">|</span> 0.393 <span class="pp">|</span> 0.907 <span class="pp">|</span> 0.233 <span class="pp">|</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a><span class="fu">### Findings</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Fréchet has a clean inverted-U with λ\* = 0.3** — the textbook signature of</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>   a well-behaved regularizer weight. At λ=0.3 it beats baseline on **R@1</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>   instance (+3.2 pts, 0.237 vs 0.205, +16% rel.)** and **R@5 instance (+5.0</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>   pts, 0.610 vs 0.560)**. Too small (0.1) is too weak; too large (1.0) collapses</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>   back to / below baseline. **This is the campaign's one clear positive result.**</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**vMF's damage is NOT a pure λ artifact.** Shrinking λ from 0.05 → 0.002</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>   *reduces* the harm (R@1 0.115 → 0.170) but **never reaches baseline** (0.205)</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>   at any tested λ. So the vMF NLL term, as formulated (hybrid with detached μ +</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>   learned κ), is net-negative for sketch→photo instance retrieval across the</span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>   whole λ range. It does *slightly* help the **composite text query** at λ=0.01</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>   (s+t R@1 0.315 &gt; 0.302) — consistent with it doing something to the text</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>   geometry — but it loses the headline metric everywhere. Combined with EXP3</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>   (κ prediction unsupported), the vMF framing is **not working on this data**.</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Category retrieval stays saturated (~0.97) except where vMF over-weights.</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a><span class="fu">### Verdict &amp; recommendation</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Headline config: Fréchet-mean anchor at λ_frechet = 0.3.** It is the only</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>  spherical framing that beats the pairwise-InfoNCE baseline on the headline</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>  metric. Being confirmed at 3 seeds (see below).</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>vMF: drop from the retrieval comparison as-is; revisit only with a different</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>  formulation (e.g. contrastive-normalized vMF mixture, or κ from real</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>  multi-artist sketches) — not a λ-tuning fix.</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Triangle: closed out (inert).</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**EXP5 gate is now MET** (a loss — Fréchet — clears the baseline band), so the</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a>  FS-COCO real-triplet test is *justified*. It remains 🔴 **&gt;1 h** (download +</span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>  new loader) and is therefore left as the explicit next step, not auto-run.</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a><span class="fu">### 3-seed confirmation of Fréchet λ=0.3 vs baseline — **tempers the headline**</span></span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>Seeds {0,1,2}, same config:</span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> loss <span class="pp">|</span> R@1 inst (3 seeds) <span class="pp">|</span> raw R@1 per seed <span class="pp">|</span> R@5 inst (3 seeds) <span class="pp">|</span></span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|---|</span></span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> baseline <span class="pp">|</span> 0.207 ± 0.002 <span class="pp">|</span> 0.205 / 0.210 / 0.205 <span class="pp">|</span> 0.574 ± 0.010 <span class="pp">|</span></span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Fréchet λ=0.3 <span class="pp">|</span> **0.220 ± 0.015** | **0.237** / 0.200 / 0.223 | **0.596 ± 0.014** <span class="pp">|</span></span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>**Honest reading:** the seed-0 R@1 of 0.237 that looked like a clean +3.2 pt win</span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>was **an optimistic draw** — seeds 1,2 give 0.200 and 0.223. Over 3 seeds:</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**R@1 instance: +1.3 pts (0.220 vs 0.207), but within ~1 Fréchet-σ** (σ=0.015).</span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>  Not a decisive win at 3 seeds.</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**R@5 instance: +2.2 pts (0.596 vs 0.574), ~1.5× pooled σ** — the more</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a>  consistent signal, positive in the aggregate.</span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a>So the tempered conclusion: **Fréchet λ=0.3 is the best of the three framings and</span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>shows a small, mostly-R@5 edge over baseline, but the R@1 margin is seed-sensitive</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>and not yet significant.** It is a *promising* signal worth the real-data test,</span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>not a settled win. Firm it up with (a) more seeds, (b) a larger gallery (raise</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a><span class="in">`eval_max_queries`</span>), (c) FS-COCO (EXP5). The single-seed λ curve (inverted-U with</span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>peak at 0.3) is still the right λ; the *magnitude* of the gain was overstated by</span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a>one lucky seed.</span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a><span class="fu">### Caveats</span></span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sweep is single-seed; the confirmation run addresses only the winner. Other</span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>  λ points are point estimates.</span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pseudo-text (A1); gallery 80; <span class="in">`steps=1500`</span>. Absolute numbers are not</span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>  publication-grade — the *relative* λ response is the result.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
